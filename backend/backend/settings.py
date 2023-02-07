@@ -84,9 +84,6 @@ DATABASES = {
         'PASSWORD': os.environ.get('CRUSHBACK_DB_PASSWORD'),
         'HOST': os.environ.get('CRUSHBACK_DB_HOST'),
         'PORT': os.environ.get('CRUSHBACK_DB_PORT', '5432'),
-        'OPTIONS': {
-            'options': '-c search_path=' + os.environ.get('CRUSHBACK_DB_SCHEMA', 'schema_name')
-        },
         'TEST': {
             'NAME': 'test_db',
         },
