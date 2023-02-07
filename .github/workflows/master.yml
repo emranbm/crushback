@@ -1,5 +1,5 @@
 ---
-name: Build and Test
+name: Master Workflow
 on:
   push:
     branches:
@@ -19,8 +19,20 @@ jobs:
       - name: Build images
         run: docker-compose build --parallel
       - name: Run unit tests
-      # TODO: Instead of sleep, wait for DB health.
+      # TODO: Instead of blind sleep, check DB health.
         run: docker-compose run backend bash -c "sleep 1 && ./manage.py test"
       - name: Push images to the registry
         run: docker-compose push
-
+  deploy:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          lfs: false
+      - name: Setup Kube config
+        run: >
+          KUBE_API_SERVER="${{ vars.KUBE_API_SERVER }}"
+          KUBE_NAMESPACE="${{ vars.KUBE_NAMESPACE }}"
+          KUBE_API_TOKEN="${{ secrets.KUBE_API_TOKEN }}"
+          ./.github/scripts/setup-kubectl.sh
+      - run: helm upgrade crushback -i k8s/helm/crushback/
