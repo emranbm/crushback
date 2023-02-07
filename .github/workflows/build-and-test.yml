@@ -1,0 +1,25 @@
+---
+name: Build and Test
+on:
+  push:
+    branches:
+      - master
+jobs:
+  build-and-test:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          lfs: true
+      - name: Inflate the version variable
+        run: |
+          echo "DJANGO_REACT_TEMPLATE_VERSION=snapshot-${GITHUB_SHA}" >> $GITHUB_ENV
+      - name: Docker Login
+        run: echo ${{ secrets.DOCKER_REGISTRY_TOKEN }} | docker login -u ${{ secrets.DOCKER_REGISTRY_USER }} --password-stdin registry.gitlab.com
+      - name: Build images
+        run: docker-compose build --parallel
+      - name: Run unit tests
+        run: docker-compose run backend ./manage.py test
+      - name: Push images to the registry
+        run: docker-compose push
+

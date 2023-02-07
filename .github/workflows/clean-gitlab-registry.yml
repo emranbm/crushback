@@ -1,0 +1,22 @@
+---
+name: Clean Gitlab Docker Registry
+on:
+  schedule:
+    - cron: "30 23 * * *" # every night 23:30 UTC = 03:00 ASIA/TEHRAN
+env:
+  BACKEND_IMAGE_NAME: "registry.gitlab.com/emran.bm/DJANGO_REACT_TEMPLATE/backend"
+  GITLAB_PROJECT_ID: 37660795
+  GARBAGE_IMAGES_PREFIX: "snapshot-"
+jobs:
+  clean-gitlab-registry:
+    runs-on: ubuntu-20.04
+    container:
+      image: nyurik/alpine-python3-requests
+    steps:
+      - uses: actions/checkout@v2
+      - name: Clean Backend garbage images
+        run: ./.github/utils/clean-gitlab-docker-registry.py
+          --project-id ${GITLAB_PROJECT_ID}
+          --access-token ${{ secrets.DOCKER_REGISTRY_TOKEN }}
+          --repo ${BACKEND_IMAGE_NAME}
+          --prefix "${GARBAGE_IMAGES_PREFIX}"

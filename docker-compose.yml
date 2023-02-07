@@ -1,0 +1,62 @@
+version: "3.7"
+services:
+  backend:
+    image: ${DOCKER_IMAGES_PREFIX}/backend:${DJANGO_REACT_TEMPLATE_VERSION}
+    restart: unless-stopped
+    build: backend/
+    environment:
+      - DJANGO_SETTINGS_MODULE
+      - DJANGO_REACT_TEMPLATE_SECRET_KEY
+      - RECAPTCHA_SERVER_KEY
+      - DJANGO_REACT_TEMPLATE_DB_USER
+      - DJANGO_REACT_TEMPLATE_DB_PASSWORD
+      - DJANGO_REACT_TEMPLATE_DB_NAME
+      - DJANGO_REACT_TEMPLATE_DB_SCHEMA
+      - DJANGO_REACT_TEMPLATE_DB_HOST
+      - DJANGO_REACT_TEMPLATE_DB_PORT
+    volumes:
+      - backend_static_files:/app/static/
+    ports:
+      - "80"
+    depends_on:
+      - database
+  database:
+    image: postgres:15.1-alpine
+    restart: unless-stopped
+    environment:
+      - POSTGRES_PASSWORD=$DJANGO_REACT_TEMPLATE_DB_ROOT_PASSWORD
+      - DJANGO_REACT_TEMPLATE_DB_USER
+      - DJANGO_REACT_TEMPLATE_DB_PASSWORD
+      - DJANGO_REACT_TEMPLATE_DB_NAME
+      - DJANGO_REACT_TEMPLATE_DB_SCHEMA
+    ports:
+      - $DB_PORT_MAPPING
+    volumes:
+      - ./.db-data/:/var/lib/postgresql/data
+      - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
+  frontend:
+    build: ./frontend
+    image: ${DOCKER_IMAGES_PREFIX}/frontend:${DJANGO_REACT_TEMPLATE_VERSION}
+    environment:
+      - API_BASE_URL
+    volumes:
+      - frontend_files:/mnt/frontend/
+  nginx:
+    image: nginx:1.23.0-alpine
+    ports:
+      - "443:443"
+      - "80:80"
+    restart: unless-stopped
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - $FULLCHAIN_PATH:/etc/ssl-files/fullchain.pem:ro
+      - $PRIVKEY_PATH:/etc/ssl-files/privkey.pem:ro
+      - backend_static_files:/app/static/:ro
+      - frontend_files:/mnt/frontend/:ro
+    depends_on:
+      - backend
+      - frontend
+
+volumes:
+  backend_static_files:
+  frontend_files:
