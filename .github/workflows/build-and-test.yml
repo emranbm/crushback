@@ -19,7 +19,8 @@ jobs:
       - name: Build images
         run: docker-compose build --parallel
       - name: Run unit tests
-        run: docker-compose run backend ./manage.py test
+      # TODO: Instead of sleep, wait for DB health.
+        run: docker-compose run backend bash -c "sleep 1 && ./manage.py test"
       - name: Push images to the registry
         run: docker-compose push
 
