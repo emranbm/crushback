@@ -19,7 +19,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('DJANGO_REACT_TEMPLATE_SECRET_KEY', 'fake-secret')
+SECRET_KEY = os.environ.get('CRUSHBACK_SECRET_KEY', 'fake-secret')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -79,13 +79,13 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('DJANGO_REACT_TEMPLATE_DB_NAME'),
-        'USER': os.environ.get('DJANGO_REACT_TEMPLATE_DB_USER'),
-        'PASSWORD': os.environ.get('DJANGO_REACT_TEMPLATE_DB_PASSWORD'),
-        'HOST': os.environ.get('DJANGO_REACT_TEMPLATE_DB_HOST'),
-        'PORT': os.environ.get('DJANGO_REACT_TEMPLATE_DB_PORT', '5432'),
+        'NAME': os.environ.get('CRUSHBACK_DB_NAME'),
+        'USER': os.environ.get('CRUSHBACK_DB_USER'),
+        'PASSWORD': os.environ.get('CRUSHBACK_DB_PASSWORD'),
+        'HOST': os.environ.get('CRUSHBACK_DB_HOST'),
+        'PORT': os.environ.get('CRUSHBACK_DB_PORT', '5432'),
         'OPTIONS': {
-            'options': '-c search_path=' + os.environ.get('DJANGO_REACT_TEMPLATE_DB_SCHEMA', 'schema_name')
+            'options': '-c search_path=' + os.environ.get('CRUSHBACK_DB_SCHEMA', 'schema_name')
         },
         'TEST': {
             'NAME': 'test_db',

@@ -25,7 +25,7 @@ class UserViewSet(viewsets.GenericViewSet):
         serializer = AuthCodeRequestSerializer(data=request.data, context={"request": request})
         serializer.is_valid(raise_exception=True)
         auth_code = str(random.randrange(10_000, 100_000))
-        utils.send_sms(serializer.data['phone_number'], f"DJANGO_REACT_TEMPLATE login code:\n{auth_code}")
+        utils.send_sms(serializer.data['phone_number'], f"Crushback login code:\n{auth_code}")
         caches[settings.CACHE_NAME_AUTH_CODES].set(serializer.data['phone_number'], auth_code)
         return Response(status=HTTP_202_ACCEPTED)
 

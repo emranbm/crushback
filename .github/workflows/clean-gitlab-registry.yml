@@ -4,7 +4,7 @@ on:
   schedule:
     - cron: "30 23 * * *" # every night 23:30 UTC = 03:00 ASIA/TEHRAN
 env:
-  BACKEND_IMAGE_NAME: "registry.gitlab.com/emran.bm/DJANGO_REACT_TEMPLATE/backend"
+  BACKEND_IMAGE_NAME: "registry.gitlab.com/emran.bm/crushback/backend"
   GITLAB_PROJECT_ID: 37660795
   GARBAGE_IMAGES_PREFIX: "snapshot-"
 jobs:

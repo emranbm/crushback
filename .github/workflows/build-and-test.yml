@@ -13,7 +13,7 @@ jobs:
           lfs: true
       - name: Inflate the version variable
         run: |
-          echo "DJANGO_REACT_TEMPLATE_VERSION=snapshot-${GITHUB_SHA}" >> $GITHUB_ENV
+          echo "CRUSHBACK_VERSION=snapshot-${GITHUB_SHA}" >> $GITHUB_ENV
       - name: Docker Login
         run: echo ${{ secrets.DOCKER_REGISTRY_TOKEN }} | docker login -u ${{ secrets.DOCKER_REGISTRY_USER }} --password-stdin registry.gitlab.com
       - name: Build images

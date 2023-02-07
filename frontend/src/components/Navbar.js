@@ -20,7 +20,7 @@ export default function Navbar() {
                 <BootstrapNavbar className="navbar ml-auto" bg="dark" expand="lg">
                     <Nav className="container-fluid">
                         <Nav.Item>
-                            <BootstrapNavbar.Brand href="/" className="text-white">DJANGO_REACT_TEMPLATE</BootstrapNavbar.Brand>
+                            <BootstrapNavbar.Brand href="/" className="text-white">Crushback</BootstrapNavbar.Brand>
                         </Nav.Item>
                         {loginContext.isLoggedIn ? <>
                                 <Nav.Item>
@@ -35,7 +35,7 @@ export default function Navbar() {
                         }
                         <Nav.Item className="ml-auto">
                             <abbr title="GitHub repo">
-                                <a href="https://github.com/emranprojects/DJANGO_REACT_TEMPLATE" target="_blank"
+                                <a href="https://github.com/emranprojects/CRUSHBACK" target="_blank"
                                    className="btn btn-dark"><img src={githubIcon}/></a>
                             </abbr>
                         </Nav.Item>
