@@ -1,7 +1,7 @@
 version: "3.7"
 services:
   backend:
-    image: ${DOCKER_IMAGES_PREFIX}/backend:${CRUSHBACK_VERSION}
+    image: ${DOCKER_IMAGES_PREFIX}-backend:${CRUSHBACK_VERSION}
     restart: unless-stopped
     build: backend/
     environment:
@@ -36,7 +36,7 @@ services:
       - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
   frontend:
     build: ./frontend
-    image: ${DOCKER_IMAGES_PREFIX}/frontend:${CRUSHBACK_VERSION}
+    image: ${DOCKER_IMAGES_PREFIX}-frontend:${CRUSHBACK_VERSION}
     environment:
       - API_BASE_URL
     volumes:
