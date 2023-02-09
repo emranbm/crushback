@@ -11,7 +11,24 @@ backend:
     repository: emranbm/crushback-backend
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
-    tag: ""
+    tag: "master-135368b5194a750f8ae93b8f75a5a0c957d9e9b6"
+  resources:
+    cpu: 200m
+    memory: 256Mi
+    ephemeral-storage: 200Mi
+
+frontend:
+  apiBaseUrl: "https://api.crushback.net"
+  replicaCount: 1
+  image:
+    repository: emranbm/crushback-frontend
+    pullPolicy: IfNotPresent
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: "master-135368b5194a750f8ae93b8f75a5a0c957d9e9b6"
+  resources:
+    cpu: 200m
+    memory: 256Mi
+    ephemeral-storage: 200Mi
 
 database:
   host: postgresql
@@ -40,11 +57,6 @@ securityContext: { }
 service:
   type: ClusterIP
   port: 80
-
-resources:
-  cpu: 200m
-  memory: 256Mi
-  ephemeral-storage: 200Mi
 
 autoscaling:
   enabled: false

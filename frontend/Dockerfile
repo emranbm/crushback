@@ -6,7 +6,9 @@ COPY . .
 RUN npm run build
 
 FROM nginx:1.23.0-alpine
+COPY envsubst-pattern.sh /usr/local/bin/envsubst-pattern
+RUN chmod +x /usr/local/bin/envsubst-pattern
 COPY nginx.conf /etc/nginx/conf.d/default.conf
-COPY update-app-config.sh /docker-entrypoint.d/40-update-app-config.sh
-RUN chmod +x /docker-entrypoint.d/40-update-app-config.sh
+COPY entrypoint.sh /docker-entrypoint.d/40-crushback-entrypoint.sh
+RUN chmod +x /docker-entrypoint.d/40-crushback-entrypoint.sh
 COPY --from=build-env /app/build/ /app/frontend/
