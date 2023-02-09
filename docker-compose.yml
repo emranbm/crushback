@@ -37,24 +37,10 @@ services:
     image: ${DOCKER_IMAGES_PREFIX}-frontend:${CRUSHBACK_VERSION}
     environment:
       - API_BASE_URL
-    volumes:
-      - frontend_files:/mnt/frontend/
-  nginx:
-    image: nginx:1.23.0-alpine
     ports:
-      - "443:443"
       - "80:80"
-    restart: unless-stopped
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
-      - $FULLCHAIN_PATH:/etc/ssl-files/fullchain.pem:ro
-      - $PRIVKEY_PATH:/etc/ssl-files/privkey.pem:ro
-      - backend_static_files:/app/static/:ro
-      - frontend_files:/mnt/frontend/:ro
     depends_on:
       - backend
-      - frontend
 
 volumes:
   backend_static_files:
-  frontend_files:

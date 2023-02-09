@@ -5,7 +5,8 @@ RUN npm install
 COPY . .
 RUN npm run build
 
-FROM alpine:3.15
-COPY update-frontend-files.sh /
-COPY --from=build-env /app/build/ /app/
-CMD sh /update-frontend-files.sh
+FROM nginx:1.23.0-alpine
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY update-app-config.sh /docker-entrypoint.d/40-update-app-config.sh
+RUN chmod +x /docker-entrypoint.d/40-update-app-config.sh
+COPY --from=build-env /app/build/ /app/frontend/
