@@ -20,7 +20,7 @@ jobs:
         run: docker-compose build --parallel
       - name: Run unit tests
       # TODO: Instead of blind sleep, check DB health.
-        run: docker-compose run backend bash -c "sleep 1 && ./manage.py test"
+        run: docker-compose run backend bash -c "sleep 1.5 && ./manage.py test"
       - name: Push images to the registry
         run: docker-compose push
   deploy:
