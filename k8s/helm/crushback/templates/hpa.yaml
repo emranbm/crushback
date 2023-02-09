@@ -1,4 +1,4 @@
-{{- if .Values.backend.autoscaling.enabled }}
+{{- if .Values.autoscaling.enabled }}
 apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
@@ -10,19 +10,19 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: {{ include "crushback.fullname" . }}
-  minReplicas: {{ .Values.backend.autoscaling.minReplicas }}
-  maxReplicas: {{ .Values.backend.autoscaling.maxReplicas }}
+  minReplicas: {{ .Values.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.autoscaling.maxReplicas }}
   metrics:
-    {{- if .Values.backend.autoscaling.targetCPUUtilizationPercentage }}
+    {{- if .Values.autoscaling.targetCPUUtilizationPercentage }}
     - type: Resource
       resource:
         name: cpu
-        targetAverageUtilization: {{ .Values.backend.autoscaling.targetCPUUtilizationPercentage }}
+        targetAverageUtilization: {{ .Values.autoscaling.targetCPUUtilizationPercentage }}
     {{- end }}
-    {{- if .Values.backend.autoscaling.targetMemoryUtilizationPercentage }}
+    {{- if .Values.autoscaling.targetMemoryUtilizationPercentage }}
     - type: Resource
       resource:
         name: memory
-        targetAverageUtilization: {{ .Values.backend.autoscaling.targetMemoryUtilizationPercentage }}
+        targetAverageUtilization: {{ .Values.autoscaling.targetMemoryUtilizationPercentage }}
     {{- end }}
 {{- end }}

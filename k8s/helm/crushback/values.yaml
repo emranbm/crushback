@@ -7,12 +7,6 @@ backend:
   recaptchaServerKey: dummy
   djangoSettingsModule: backend.settings-production
   replicaCount: 1
-  autoscaling:
-    enabled: false
-    minReplicas: 1
-    maxReplicas: 100
-    targetCPUUtilizationPercentage: 80
-    # targetMemoryUtilizationPercentage: 80
   image:
     repository: emranbm/crushback-backend
     pullPolicy: IfNotPresent
@@ -52,6 +46,12 @@ resources:
   memory: 256Mi
   ephemeral-storage: 200Mi
 
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
 
 nodeSelector: { }
 

@@ -5,7 +5,7 @@ metadata:
   labels:
     {{- include "crushback.labels" . | nindent 4 }}
 spec:
-  {{- if not .Values.backend.autoscaling.enabled }}
+  {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.backend.replicaCount }}
   {{- end }}
   selector:
