@@ -13,7 +13,7 @@ jobs:
           lfs: true
       - name: Inflate the version variable
         run: |
-          echo "CRUSHBACK_VERSION=snapshot-${GITHUB_SHA}" >> $GITHUB_ENV
+          echo "CRUSHBACK_VERSION=master-${GITHUB_SHA}" >> $GITHUB_ENV
       - name: Docker Login
         run: echo ${{ secrets.DOCKER_REGISTRY_TOKEN }} | docker login -u ${{ vars.DOCKER_REGISTRY_USER }} --password-stdin ${{ vars.DOCKER_REGISTRY_HOST }}
       - name: Build images
@@ -25,6 +25,7 @@ jobs:
         run: docker-compose push
   deploy:
     runs-on: ubuntu-20.04
+    needs: build-and-test
     steps:
       - uses: actions/checkout@v2
         with:
@@ -35,4 +36,4 @@ jobs:
           KUBE_NAMESPACE="${{ vars.KUBE_NAMESPACE }}"
           KUBE_API_TOKEN="${{ secrets.KUBE_API_TOKEN }}"
           ./.github/scripts/setup-kubectl.sh
-      - run: helm upgrade crushback -i k8s/helm/crushback/
+      - run: helm upgrade crushback -i --set image.tag="master-${GITHUB_SHA}" k8s/helm/crushback/
