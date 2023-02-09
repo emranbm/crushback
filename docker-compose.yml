@@ -11,7 +11,6 @@ services:
       - CRUSHBACK_DB_USER
       - CRUSHBACK_DB_PASSWORD
       - CRUSHBACK_DB_NAME
-      - CRUSHBACK_DB_SCHEMA
       - CRUSHBACK_DB_HOST
       - CRUSHBACK_DB_PORT
     volumes:
@@ -28,7 +27,6 @@ services:
       - CRUSHBACK_DB_USER
       - CRUSHBACK_DB_PASSWORD
       - CRUSHBACK_DB_NAME
-      - CRUSHBACK_DB_SCHEMA
     ports:
       - $DB_PORT_MAPPING
     volumes:

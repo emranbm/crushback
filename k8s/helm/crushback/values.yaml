@@ -10,6 +10,18 @@ image:
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
 
+backend:
+  secretKey: dummy
+  recaptchaServerKey: dummy
+  djangoSettingsModule: backend.settings-production
+
+database:
+  host: postgresql
+  port: 5432
+  name: crushback_db
+  user: root
+  password: dummy
+
 imagePullSecrets: [ ]
 nameOverride: ""
 fullnameOverride: ""

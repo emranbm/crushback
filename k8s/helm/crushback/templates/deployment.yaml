@@ -49,6 +49,23 @@ spec:
               {{- toYaml .Values.resources | nindent 14 }}
             requests:
               {{- toYaml .Values.resources | nindent 14 }}
+          env:
+            - name: CRUSHBACK_SECRET_KEY
+              value: "{{ .Values.backend.secretKey }}"
+            - name: RECAPTCHA_SERVER_KEY
+              value: "{{ .Values.backend.recaptchaServerKey }}"
+            - name: DJANGO_SETTINGS_MODULE
+              value: "{{ .Values.backend.djangoSettingsModule }}"
+            - name: CRUSHBACK_DB_HOST
+              value: "{{ .Values.database.host }}"
+            - name: CRUSHBACK_DB_PORT
+              value: "{{ .Values.database.port }}"
+            - name: CRUSHBACK_DB_NAME
+              value: "{{ .Values.database.name }}"
+            - name: CRUSHBACK_DB_USER
+              value: "{{ .Values.database.user }}"
+            - name: CRUSHBACK_DB_PASSWORD
+              value: "{{ .Values.database.password }}"
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

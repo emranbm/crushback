@@ -4,10 +4,10 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-django = "==4.0.6"
-djangorestframework = "==3.13.1"
-drf-recaptcha = "==2.0.7"
-pytz = "==2022.1"
+Django = "==4.1.6"
+djangorestframework = "==3.14.0"
+drf-recaptcha = "==2.2.2"
+pytz = "==2022.7.1"
 psycopg2-binary = "==2.9.5"
 
 [dev-packages]
