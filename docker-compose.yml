@@ -3,10 +3,7 @@ services:
   backend:
     image: ${DOCKER_IMAGES_PREFIX}-backend:${CRUSHBACK_VERSION}
     restart: unless-stopped
-    build:
-      context: backend/
-      cache_from:
-        - ${DOCKER_IMAGES_PREFIX}-backend:latest
+    build: backend/
     environment:
       - DJANGO_SETTINGS_MODULE
       - CRUSHBACK_SECRET_KEY
@@ -37,10 +34,7 @@ services:
       - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
   frontend:
     image: ${DOCKER_IMAGES_PREFIX}-frontend:${CRUSHBACK_VERSION}
-    build:
-      context: ./frontend
-      cache_from:
-        - ${DOCKER_IMAGES_PREFIX}-frontend:latest
+    build: ./frontend
     environment:
       - API_BASE_URL
       - NGINX_PARAM_BACKEND_ADDRESS=backend

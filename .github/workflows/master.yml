@@ -23,10 +23,6 @@ jobs:
         run: docker-compose run backend bash -c "sleep 2 && ./manage.py test"
       - name: Push images to the registry
         run: docker-compose push
-      - name: Tag latest
-        run: CRUSHBACK_VERSION=latest docker-compose build --parallel
-      - name: Push latest tags to the registry
-        run: CRUSHBACK_VERSION=latest docker-compose push
   deploy:
     runs-on: ubuntu-20.04
     needs: build-and-test
