@@ -37,6 +37,7 @@ jobs:
       - run: >
           helm upgrade -i crushback
           --set backend.image.tag="master-${GITHUB_SHA}"
+          --set frontend.image.tag="master-${GITHUB_SHA}"
           --set backend.secretKey="${{ secrets.CRUSHBACK_SECRET_KEY }}"
           --set backend.recaptchaServerKey="${{ secrets.RECAPTCHA_SERVER_KEY }}"
           --set database.password="${{ secrets.POSTGRES_ROOT_PASSWORD }}"

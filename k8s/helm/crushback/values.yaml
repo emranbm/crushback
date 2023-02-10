@@ -11,7 +11,7 @@ backend:
     repository: emranbm/crushback-backend
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
-    tag: "master-135368b5194a750f8ae93b8f75a5a0c957d9e9b6"
+    tag: ""
   resources:
     cpu: 200m
     memory: 256Mi
@@ -24,7 +24,7 @@ frontend:
     repository: emranbm/crushback-frontend
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
-    tag: "master-135368b5194a750f8ae93b8f75a5a0c957d9e9b6"
+    tag: ""
   resources:
     cpu: 200m
     memory: 256Mi
