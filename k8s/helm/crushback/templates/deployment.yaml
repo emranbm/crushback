@@ -27,7 +27,7 @@ spec:
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
-        - name: backend
+        - name: {{ .Chart.Name }}-backend
           securityContext:
           {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag | default .Chart.AppVersion }}"
@@ -66,7 +66,7 @@ spec:
               value: "{{ .Values.database.user }}"
             - name: CRUSHBACK_DB_PASSWORD
               value: "{{ .Values.database.password }}"
-        - name: frontend
+        - name: {{ .Chart.Name }}-frontend
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag | default .Chart.AppVersion }}"
@@ -92,7 +92,7 @@ spec:
             - name: API_BASE_URL
               value: "{{ .Values.frontend.apiBaseUrl }}"
             - name: NGINX_PARAM_BACKEND_ADDRESS
-              value: "backend.{{ include "crushback.fullname" . }}"
+              value: "{{ .Chart.Name }}-backend.{{ include "crushback.fullname" . }}"
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
