@@ -46,7 +46,7 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 Backend labels
 */}}
 {{- define "crushback.labels.backend" -}}
-{{ include "crushback.labels" }}
+{{ include "crushback.labels" . }}
 {{ include "crushback.selectorLabels.backend" . }}
 {{- end }}
 
@@ -54,7 +54,7 @@ Backend labels
 Frontend labels
 */}}
 {{- define "crushback.labels.frontend" -}}
-{{ include "crushback.labels" }}
+{{ include "crushback.labels" . }}
 {{ include "crushback.selectorLabels.frontend" . }}
 {{- end }}
 
