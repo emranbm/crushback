@@ -5,7 +5,7 @@ set -eu
 main() {
   python manage.py migrate
   # TODO: Use Gunicorn in production
-  python manage.py runserver 0.0.0.0:80
+  python manage.py runserver 0.0.0.0:8080
 }
 
 main "$@"
