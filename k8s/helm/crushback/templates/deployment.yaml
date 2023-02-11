@@ -36,14 +36,6 @@ spec:
             - name: backend
               containerPort: 8080
               protocol: TCP
-          livenessProbe:
-            httpGet:
-              path: /api/
-              port: backend
-          readinessProbe:
-            httpGet:
-              path: /api/
-              port: backend
           resources:
             limits:
             {{- toYaml .Values.backend.resources | nindent 14 }}
@@ -75,14 +67,6 @@ spec:
             - name: http
               containerPort: 80
               protocol: TCP
-{{/*          livenessProbe:*/}}
-{{/*            httpGet:*/}}
-{{/*              path: /*/}}
-{{/*              port: http*/}}
-{{/*          readinessProbe:*/}}
-{{/*            httpGet:*/}}
-{{/*              path: /*/}}
-{{/*              port: http*/}}
           resources:
             limits:
               {{- toYaml .Values.frontend.resources | nindent 14 }}
