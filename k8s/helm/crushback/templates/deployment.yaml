@@ -33,17 +33,17 @@ spec:
           image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
           ports:
-            - name: http
-              containerPort: 80
+            - name: backend
+              containerPort: 8080
               protocol: TCP
           livenessProbe:
             httpGet:
               path: /api/
-              port: http
+              port: backend
           readinessProbe:
             httpGet:
               path: /api/
-              port: http
+              port: backend
           resources:
             limits:
             {{- toYaml .Values.backend.resources | nindent 14 }}
@@ -92,7 +92,7 @@ spec:
             - name: API_BASE_URL
               value: "{{ .Values.frontend.apiBaseUrl }}"
             - name: NGINX_PARAM_BACKEND_ADDRESS
-              value: "{{ .Chart.Name }}-backend.{{ include "crushback.fullname" . }}"
+              value: "{{ .Chart.Name }}-backend.{{ include "crushback.fullname" . }}:8080"
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
