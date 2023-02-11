@@ -43,9 +43,41 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
 
 {{/*
-Selector labels
+Backend labels
+*/}}
+{{- define "crushback.labels.backend" -}}
+{{ include "crushback.labels" }}
+{{ include "crushback.selectorLabels.backend" . }}
+{{- end }}
+
+{{/*
+Frontend labels
+*/}}
+{{- define "crushback.labels.frontend" -}}
+{{ include "crushback.labels" }}
+{{ include "crushback.selectorLabels.frontend" . }}
+{{- end }}
+
+{{/*
+Common selector labels
 */}}
 {{- define "crushback.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "crushback.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}
+
+{{/*
+Backend selector labels
+*/}}
+{{- define "crushback.selectorLabels.backend" -}}
+{{ include "crushback.selectorLabels" . }}
+crushback/service: backend
+{{- end }}
+
+{{/*
+Frontend selector labels
+*/}}
+{{- define "crushback.selectorLabels.frontend" -}}
+{{ include "crushback.selectorLabels" . }}
+crushback/service: frontend
 {{- end }}

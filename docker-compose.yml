@@ -37,7 +37,6 @@ services:
     build: ./frontend
     environment:
       - API_BASE_URL
-      - NGINX_PARAM_BACKEND_ADDRESS=backend
     ports:
       - "80:80"
     depends_on:
