@@ -11,5 +11,14 @@ spec:
     - name: wget
       image: busybox
       command: ['wget']
-      args: ['{{ include "crushback.fullname" . }}:{{ .Values.service.port }}']
+      args: ['{{ include "crushback.fullname" . }}-frontend:{{ .Values.service.port }}']
+      resources:
+        requests:
+          cpu: 200m
+          memory: 256Mi
+          ephemeral-storage: 200Mi
+        limits:
+          cpu: 200m
+          memory: 256Mi
+          ephemeral-storage: 200Mi
   restartPolicy: Never
