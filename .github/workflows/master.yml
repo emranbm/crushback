@@ -5,27 +5,43 @@ on:
     branches:
       - master
 jobs:
-  build-and-test:
+  build-backend:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v3
         with:
           lfs: true
-      - name: Inflate the version variable
-        run: |
-          echo "CRUSHBACK_VERSION=master-${GITHUB_SHA}" >> $GITHUB_ENV
+      - run: echo "CRUSHBACK_VERSION=master-${GITHUB_SHA}" >> $GITHUB_ENV
       - name: Docker Login
         run: echo ${{ secrets.DOCKER_REGISTRY_TOKEN }} | docker login -u ${{ vars.DOCKER_REGISTRY_USER }} --password-stdin ${{ vars.DOCKER_REGISTRY_HOST }}
-      - name: Build images
-        run: docker-compose build --parallel
-      - name: Run unit tests
-      # TODO: Instead of blind sleep, check DB health.
-        run: docker-compose run backend bash -c "sleep 2 && ./manage.py test"
-      - name: Push images to the registry
-        run: docker-compose push
-  deploy:
+      - run: docker-compose build backend
+      - run: docker-compose push backend
+  test-backend:
     runs-on: ubuntu-20.04
-    needs: build-and-test
+    needs: build-backend
+    steps:
+      - uses: actions/checkout@v3
+      - run: echo "CRUSHBACK_VERSION=master-${GITHUB_SHA}" >> $GITHUB_ENV
+      - name: Docker Login
+        run: echo ${{ secrets.DOCKER_REGISTRY_TOKEN }} | docker login -u ${{ vars.DOCKER_REGISTRY_USER }} --password-stdin ${{ vars.DOCKER_REGISTRY_HOST }}
+      - run: docker-compose pull backend
+      - name: Run unit tests
+        # TODO: Instead of blind sleep, check DB health.
+        run: docker-compose run backend bash -c "sleep 2 && ./manage.py test"
+  build-frontend:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          lfs: true
+      - run: echo "CRUSHBACK_VERSION=master-${GITHUB_SHA}" >> $GITHUB_ENV
+      - name: Docker Login
+        run: echo ${{ secrets.DOCKER_REGISTRY_TOKEN }} | docker login -u ${{ vars.DOCKER_REGISTRY_USER }} --password-stdin ${{ vars.DOCKER_REGISTRY_HOST }}
+      - run: docker-compose build frontend
+      - run: docker-compose push frontend
+  deploy-backend:
+    runs-on: ubuntu-20.04
+    needs: test-backend
     steps:
       - uses: actions/checkout@v3
       - name: Setup Kube config
@@ -42,6 +58,17 @@ jobs:
           --set recaptchaServerKey="${{ secrets.RECAPTCHA_SERVER_KEY }}"
           --set database.password="${{ secrets.POSTGRES_ROOT_PASSWORD }}"
           k8s/helm/crushback-backend/
+  deploy-frontend:
+    runs-on: ubuntu-20.04
+    needs: build-frontend
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Kube config
+        run: >
+          KUBE_API_SERVER="${{ vars.KUBE_API_SERVER }}"
+          KUBE_NAMESPACE="${{ vars.KUBE_NAMESPACE }}"
+          KUBE_API_TOKEN="${{ secrets.KUBE_API_TOKEN }}"
+          ./.github/scripts/setup-kubectl.sh
       - name: Deploy Frontend
         run: >
           helm upgrade -i crushback-frontend
