@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "crushback.fullname" . }}-backend
+  name: {{ include "crushback-backend.fullname" . }}
   labels:
-    {{- include "crushback.labels.backend" . | nindent 4 }}
+    {{- include "crushback-backend.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
   ports:
@@ -12,4 +12,4 @@ spec:
       protocol: TCP
       name: http
   selector:
-    {{- include "crushback.selectorLabels.backend" . | nindent 4 }}
+    {{- include "crushback-backend.selectorLabels" . | nindent 4 }}

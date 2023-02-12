@@ -34,11 +34,16 @@ jobs:
           KUBE_NAMESPACE="${{ vars.KUBE_NAMESPACE }}"
           KUBE_API_TOKEN="${{ secrets.KUBE_API_TOKEN }}"
           ./.github/scripts/setup-kubectl.sh
-      - run: >
-          helm upgrade -i crushback
-          --set backend.image.tag="master-${GITHUB_SHA}"
-          --set frontend.image.tag="master-${GITHUB_SHA}"
-          --set backend.secretKey="${{ secrets.CRUSHBACK_SECRET_KEY }}"
-          --set backend.recaptchaServerKey="${{ secrets.RECAPTCHA_SERVER_KEY }}"
+      - name: Deploy Backend
+        run: >
+          helm upgrade -i crushback-backend
+          --set image.tag="master-${GITHUB_SHA}"
+          --set secretKey="${{ secrets.CRUSHBACK_SECRET_KEY }}"
+          --set recaptchaServerKey="${{ secrets.RECAPTCHA_SERVER_KEY }}"
           --set database.password="${{ secrets.POSTGRES_ROOT_PASSWORD }}"
+          k8s/helm/crushback-backend/
+      - name: Deploy Frontend
+        run: >
+          helm upgrade -i crushback-frontend
+          --set image.tag="master-${GITHUB_SHA}"
           k8s/helm/crushback/

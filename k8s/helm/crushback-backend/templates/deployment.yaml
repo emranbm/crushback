@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "crushback.fullname" . }}-backend
+  name: {{ include "crushback-backend.fullname" . }}
   labels:
-    {{- include "crushback.labels.backend" . | nindent 4 }}
+    {{- include "crushback-backend.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
-  replicas: {{ .Values.backend.replicaCount }}
+  replicas: {{ .Values.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      {{- include "crushback.selectorLabels.backend" . | nindent 6 }}
+      {{- include "crushback-backend.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -18,7 +18,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "crushback.selectorLabels.backend" . | nindent 8 }}
+        {{- include "crushback-backend.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -27,11 +27,11 @@ spec:
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
-        - name: {{ .Chart.Name }}-backend
+        - name: {{ .Chart.Name }}
           securityContext:
           {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: backend
               containerPort: 8080
@@ -42,16 +42,16 @@ spec:
               port: backend
           resources:
             limits:
-            {{- toYaml .Values.backend.resources | nindent 14 }}
+            {{- toYaml .Values.resources | nindent 14 }}
             requests:
-          {{- toYaml .Values.backend.resources | nindent 14 }}
+          {{- toYaml .Values.resources | nindent 14 }}
           env:
             - name: CRUSHBACK_SECRET_KEY
-              value: "{{ .Values.backend.secretKey }}"
+              value: "{{ .Values.secretKey }}"
             - name: RECAPTCHA_SERVER_KEY
-              value: "{{ .Values.backend.recaptchaServerKey }}"
+              value: "{{ .Values.recaptchaServerKey }}"
             - name: DJANGO_SETTINGS_MODULE
-              value: "{{ .Values.backend.djangoSettingsModule }}"
+              value: "{{ .Values.djangoSettingsModule }}"
             - name: CRUSHBACK_DB_HOST
               value: "{{ .Values.database.host }}"
             - name: CRUSHBACK_DB_PORT

@@ -2,33 +2,20 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-backend:
-  secretKey: dummy
-  recaptchaServerKey: dummy
-  djangoSettingsModule: backend.settings-production
-  replicaCount: 1
-  image:
-    repository: emranbm/crushback-backend
-    pullPolicy: IfNotPresent
-    # Overrides the image tag whose default is the chart appVersion.
-    tag: ""
-  resources:
-    cpu: 200m
-    memory: 256Mi
-    ephemeral-storage: 200Mi
+secretKey: dummy
+recaptchaServerKey: dummy
+djangoSettingsModule: backend.settings-production
 
-frontend:
-  apiBaseUrl: "https://api.crushback.net"
-  replicaCount: 1
-  image:
-    repository: emranbm/crushback-frontend
-    pullPolicy: IfNotPresent
-    # Overrides the image tag whose default is the chart appVersion.
-    tag: ""
-  resources:
-    cpu: 200m
-    memory: 256Mi
-    ephemeral-storage: 200Mi
+replicaCount: 1
+image:
+  repository: emranbm/crushback-backend
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+resources:
+  cpu: 200m
+  memory: 256Mi
+  ephemeral-storage: 200Mi
 
 database:
   host: postgresql

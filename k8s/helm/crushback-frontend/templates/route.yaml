@@ -1,9 +1,9 @@
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
-  name: {{ include "crushback.fullname" . }}-backend-route
+  name: {{ include "crushback-frontend.fullname" . }}
 spec:
-  host: api.crushback.net
+  host: crushback.net
   port:
     targetPort: http
   tls:
@@ -11,6 +11,6 @@ spec:
     termination: edge
   to:
     kind: Service
-    name: crushback-backend
+    name: crushback-frontend
     weight: 100
   wildcardPolicy: None
