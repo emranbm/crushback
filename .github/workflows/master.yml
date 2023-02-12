@@ -46,4 +46,4 @@ jobs:
         run: >
           helm upgrade -i crushback-frontend
           --set image.tag="master-${GITHUB_SHA}"
-          k8s/helm/crushback/
+          k8s/helm/crushback-frontend/
