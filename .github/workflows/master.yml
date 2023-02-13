@@ -91,3 +91,20 @@ jobs:
           --set username="${{ vars.SOCKS_USER }}"
           --set password="${{ secrets.SOCKS_PASS }}"
           k8s/helm/socks-proxy/
+  deploy-telegrambot:
+    runs-on: ubuntu-20.04
+    needs: test-backend
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Kube config
+        run: >
+          KUBE_API_SERVER="${{ vars.KUBE_API_SERVER }}"
+          KUBE_NAMESPACE="${{ vars.KUBE_NAMESPACE }}"
+          KUBE_API_TOKEN="${{ secrets.KUBE_API_TOKEN }}"
+          ./.github/scripts/setup-kubectl.sh
+      - name: Deploy Telegram Bot
+        run: >
+          helm upgrade -i telegrambot
+          --set image.tag="master-${GITHUB_SHA}"
+          --set telegramBotToken="${{ secrets.TELEGRAM_BOT_TOKEN }}"
+          k8s/helm/telegrambot/

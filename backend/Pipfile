@@ -10,6 +10,10 @@ drf-recaptcha = "==2.2.2"
 pytz = "==2022.7.1"
 psycopg2-binary = "==2.9.5"
 
+[packages.python-telegram-bot]
+extras = [ "socks",]
+version = "==20.1"
+
 [dev-packages]
 
 [requires]
