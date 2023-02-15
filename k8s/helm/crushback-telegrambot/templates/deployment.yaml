@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "telegrambot.fullname" . }}
+  name: {{ include "crushback-telegrambot.fullname" . }}
   labels:
-    {{- include "telegrambot.labels" . | nindent 4 }}
+    {{- include "crushback-telegrambot.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      {{- include "telegrambot.selectorLabels" . | nindent 6 }}
+      {{- include "crushback-telegrambot.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -18,7 +18,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "telegrambot.selectorLabels" . | nindent 8 }}
+        {{- include "crushback-telegrambot.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
