@@ -16,7 +16,7 @@ services:
     volumes:
       - backend_static_files:/app/static/
     ports:
-      - "80"
+      - "8000:80"
     depends_on:
       - database
   database:
@@ -39,8 +39,6 @@ services:
       - API_BASE_URL
     ports:
       - "80:80"
-    depends_on:
-      - backend
 
 volumes:
   backend_static_files:

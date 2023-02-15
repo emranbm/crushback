@@ -79,10 +79,10 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('CRUSHBACK_DB_NAME'),
-        'USER': os.environ.get('CRUSHBACK_DB_USER'),
-        'PASSWORD': os.environ.get('CRUSHBACK_DB_PASSWORD'),
-        'HOST': os.environ.get('CRUSHBACK_DB_HOST'),
+        'NAME': os.environ.get('CRUSHBACK_DB_NAME', 'crushback_db'),
+        'USER': os.environ.get('CRUSHBACK_DB_USER', 'crushback'),
+        'PASSWORD': os.environ.get('CRUSHBACK_DB_PASSWORD', 'dummy'),
+        'HOST': os.environ.get('CRUSHBACK_DB_HOST', 'localhost'),
         'PORT': os.environ.get('CRUSHBACK_DB_PORT', '5432'),
         'TEST': {
             'NAME': 'test_db',
