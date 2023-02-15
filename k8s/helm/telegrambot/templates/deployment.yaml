@@ -37,6 +37,7 @@ spec:
           args:
             - ./manage.py
             - telegrambot
+            - --token
             - "{{ .Values.telegramBotToken }}"
             - --proxy
             - "{{ .Values.proxyUrl }}"
