@@ -104,7 +104,7 @@ jobs:
           ./.github/scripts/setup-kubectl.sh
       - name: Deploy Telegram Bot
         run: >
-          helm upgrade -i telegrambot
+          helm upgrade -i crushback-telegrambot
           --set image.tag="master-${GITHUB_SHA}"
           --set telegramBotToken="${{ secrets.TELEGRAM_BOT_TOKEN }}"
-          k8s/helm/telegrambot/
+          k8s/helm/crushback-telegrambot/
