@@ -15,4 +15,4 @@ data:
       # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
       - job_name: 'prometheus'
         static_configs:
-          - targets: ['{{ .Chart.Name }}-cluster-metrics:8080']
+          - targets: ['{{ .Chart.Name }}-cluster-metrics.{{ include "prometheus.fullname" . }}:8080']
