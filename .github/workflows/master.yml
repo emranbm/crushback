@@ -107,4 +107,6 @@ jobs:
           helm upgrade -i crushback-telegrambot
           --set image.tag="master-${GITHUB_SHA}"
           --set telegramBotToken="${{ secrets.TELEGRAM_BOT_TOKEN }}"
+          --set secretKey="${{ secrets.CRUSHBACK_SECRET_KEY }}"
+          --set database.password="${{ secrets.POSTGRES_ROOT_PASSWORD }}"
           k8s/helm/crushback-telegrambot/

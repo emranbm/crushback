@@ -3,6 +3,7 @@
 # Declare variables to be passed into your templates.
 
 
+secretKey: dummy
 telegramBotToken: dummy
 proxyUrl: "socks5://socks-proxy:8123"
 
@@ -13,6 +14,13 @@ image:
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
+
+database:
+  host: postgresql
+  port: 5432
+  name: crushback_db
+  user: root
+  password: dummy
 
 imagePullSecrets: []
 nameOverride: ""
