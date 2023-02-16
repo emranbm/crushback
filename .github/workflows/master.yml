@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - master
+env:
+  HELM_MAX_HISTORY: "5"
 jobs:
   build-backend:
     runs-on: ubuntu-20.04
