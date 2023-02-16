@@ -49,3 +49,10 @@ Selector labels
 app.kubernetes.io/name: {{ include "prometheus.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
+
+{{/*
+Create the name of the service account to use
+*/}}
+{{- define "prometheus.serviceAccountName" -}}
+{{- default (include "prometheus.fullname" .) .Values.serviceAccount.name }}
+{{- end }}

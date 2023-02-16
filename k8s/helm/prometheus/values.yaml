@@ -8,11 +8,28 @@ image:
   repository: prom/prometheus
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: ""
+  tag: "v2.42.0"
+
+clusterExporter:
+  image:
+    repository: itzg/kube-metrics-exporter
+    tag: "v1.2.0"
+  resources:
+    cpu: 100m
+    memory: 128Mi
+    ephemeral-storage: 150Mi
 
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
+
+serviceAccount:
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: "cluster-metrics-exporter-service-account"
+
 
 podAnnotations: {}
 

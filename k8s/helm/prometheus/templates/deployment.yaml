@@ -27,7 +27,7 @@ spec:
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
+          {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
@@ -41,6 +41,29 @@ spec:
           volumeMounts:
             - name: config-volume
               mountPath: /etc/prometheus/
+          resources:
+            requests:
+            {{- toYaml .Values.resources | nindent 14 }}
+            limits:
+            {{- toYaml .Values.resources | nindent 14 }}
+        - name: {{ .Chart.Name }}-cluster-metrics
+          securityContext:
+          {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.clusterExporter.image.repository }}:{{ .Values.clusterExporter.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: cluster-metrics
+              containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /metrics
+              port: cluster-metrics
+          env:
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
           resources:
             requests:
             {{- toYaml .Values.resources | nindent 14 }}
