@@ -1,6 +1,7 @@
 import random
 import string
 
+import telegram.constants
 from asgiref.sync import sync_to_async
 from telegram import Update
 from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler
@@ -25,9 +26,10 @@ class TelegramBot:
     @staticmethod
     async def _on_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await TelegramBot._create_or_update_user(update)
-        message = render_to_string('start_command_reply.txt', {'update': update})
+        message = render_to_string('start_command_reply.html', {'update': update})
         await context.bot.send_message(chat_id=update.effective_chat.id,
-                                       text=message)
+                                       text=message,
+                                       parse_mode=telegram.constants.ParseMode.HTML)
 
     @staticmethod
     async def _create_or_update_user(update: Update) -> models.User:
