@@ -36,7 +36,7 @@ class StartCommandTest(TestCase):
         context = self._create_default_context()
         await TelegramBot._on_start(update, context)
         send_message_kwargs = context.bot.send_message.call_args.kwargs
-        self.assertTrue(f"Hello {self.TEST_USER_FIRST_NAME}" in send_message_kwargs['text'],
+        self.assertTrue(f"Hi {self.TEST_USER_FIRST_NAME}" in send_message_kwargs['text'],
                         f"Unexpected reply message: {send_message_kwargs['text']}")
 
     async def test_should_save_new_user(self):
