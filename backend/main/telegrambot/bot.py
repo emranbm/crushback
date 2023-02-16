@@ -23,14 +23,15 @@ class TelegramBot:
     @staticmethod
     async def _on_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await TelegramBot._create_or_update_user(update)
-        await context.bot.send_message(chat_id=update.effective_chat.id,
-                                       text=f'''
+        message = f'''
 Hello {update.effective_user.first_name},
 Thanks for texting me!
 I'm newborn and still under construction...
 Would you please text me later?
 I'll love checking if your crush is already having a crushback on you!
-        ''')
+        '''
+        await context.bot.send_message(chat_id=update.effective_chat.id,
+                                       text=message)
 
     @staticmethod
     async def _create_or_update_user(update: Update) -> models.User:
