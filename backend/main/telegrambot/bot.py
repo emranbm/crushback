@@ -35,14 +35,26 @@ I'll love checking if your crush is already having a crushback on you!
     @staticmethod
     async def _create_or_update_user(update: Update) -> models.User:
         (user, created) = await models.User.objects.aget_or_create(
-            telegram_chat_id=update.effective_chat.id,
+            telegram_user_id=update.effective_user.id,
             defaults={
+                'telegram_chat_id': update.effective_chat.id,
                 'telegram_username': update.effective_user.username,
                 'username': ''.join(random.choice(string.ascii_letters) for i in range(64)),
                 'first_name': update.effective_user.first_name,
                 'last_name': update.effective_user.last_name or '',
             })
-        if not created and user.telegram_username != update.effective_user.username:
-            user.telegram_username = update.effective_user.username
-            await sync_to_async(user.save)()
+        if not created:
+            await TelegramBot._update_user_if_needed(user, update)
         return user
+
+    @staticmethod
+    async def _update_user_if_needed(user: models.User, update: Update) -> None:
+        should_save = False
+        if user.telegram_username != update.effective_user.username:
+            user.telegram_username = update.effective_user.username
+            should_save = True
+        if user.telegram_chat_id != update.effective_chat.id:
+            user.telegram_chat_id = update.effective_chat.id
+            should_save = True
+        if should_save:
+            await sync_to_async(user.save)()
