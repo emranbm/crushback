@@ -5,6 +5,8 @@ from asgiref.sync import sync_to_async
 from telegram import Update
 from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler
 
+from django.template.loader import render_to_string
+
 from main import models
 
 
@@ -23,13 +25,7 @@ class TelegramBot:
     @staticmethod
     async def _on_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await TelegramBot._create_or_update_user(update)
-        message = f'''
-Hello {update.effective_user.first_name},
-Thanks for texting me!
-I'm newborn and still under construction...
-Would you please text me later?
-I'll love checking if your crush is already having a crushback on you!
-        '''
+        message = render_to_string('start_command_reply.txt', {'update': update})
         await context.bot.send_message(chat_id=update.effective_chat.id,
                                        text=message)
 
