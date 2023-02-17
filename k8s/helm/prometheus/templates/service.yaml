@@ -6,6 +6,9 @@ metadata:
     {{- include "prometheus.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
+  {{- if .Values.service.isHeadless }}
+  clusterIP: None
+  {{- end }}
   ports:
     - port: {{ .Values.service.port }}
       targetPort: http

@@ -41,6 +41,7 @@ securityContext: {}
 
 service:
   type: ClusterIP
+  isHeadless: true
   port: 80
 
 resources:

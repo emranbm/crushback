@@ -9,6 +9,7 @@ spec:
   selector:
     matchLabels:
       {{- include "prometheus.selectorLabels" . | nindent 6 }}
+  serviceName: {{ include "prometheus.fullname" . }}
   volumeClaimTemplates:
     - metadata:
         name: {{ include "prometheus.fullname" . }}-vol
