@@ -11,7 +11,7 @@ spec:
       {{- include "prometheus.selectorLabels" . | nindent 6 }}
   volumeClaimTemplates:
     - metadata:
-        name: {{ include "prometheus.fullname" }}-vol
+        name: {{ include "prometheus.fullname" . }}-vol
       spec:
         accessModes:
           - ReadWriteOnce
