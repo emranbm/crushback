@@ -49,3 +49,11 @@ Selector labels
 app.kubernetes.io/name: {{ include "prometheus.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
+
+{{/*
+Prometheus config ConfigMap name
+*/}}
+{{- define "prometheus.config.configMapName" -}}
+{{- include "prometheus.fullname" . }}-{{ tpl .Values.prometheusConfig . | sha256sum | substr 0 5 }}
+{{- end }}
+

@@ -6,8 +6,6 @@ metadata:
     {{- include "prometheus.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
-  strategy:
-    type: Recreate
   selector:
     matchLabels:
       {{- include "prometheus.selectorLabels" . | nindent 6 }}
@@ -63,4 +61,4 @@ spec:
       volumes:
         - name: config-volume
           configMap:
-            name: {{ include "prometheus.fullname" . }}
+            name: {{ include "prometheus.config.configMapName" . }}
