@@ -52,7 +52,7 @@ spec:
             - name: config-volume
               mountPath: /etc/prometheus/
               readOnly: true
-            - name: {{ include "prometheus.fullname" }}-vol
+            - name: {{ include "prometheus.fullname" . }}-vol
               mountPath: /prometheus/
           resources:
             requests:
