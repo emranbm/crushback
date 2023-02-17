@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: {{ include "prometheus.fullname" . }}
   labels:
@@ -9,6 +9,16 @@ spec:
   selector:
     matchLabels:
       {{- include "prometheus.selectorLabels" . | nindent 6 }}
+  volumeClaimTemplates:
+    - metadata:
+        name: {{ include "prometheus.fullname" }}-vol
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: {{ .Values.resources.storage }}
+        storageClassName: standard
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -65,6 +75,3 @@ spec:
         - name: config-volume
           configMap:
             name: {{ include "prometheus.config.configMapName" . }}
-        - name: {{ include "prometheus.fullname" }}-vol
-          persistentVolumeClaim:
-            claimName: {{ include "prometheus.fullname" }}-vol
