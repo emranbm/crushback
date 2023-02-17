@@ -54,6 +54,6 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 Prometheus config ConfigMap name
 */}}
 {{- define "prometheus.config.configMapName" -}}
-{{- include "prometheus.fullname" . }}-{{ tpl .Values.prometheusConfig . | sha256sum | substr 0 5 }}
+{{- include "prometheus.fullname" . }}-{{ toYaml .Values.prometheusConfigs | sha256sum | substr 0 5 }}
 {{- end }}
 

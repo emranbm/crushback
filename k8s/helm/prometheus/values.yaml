@@ -2,17 +2,21 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-prometheusConfig: |
-  global:
-    scrape_interval: 15s
-    external_labels:
-      monitor: 'crushback-cluster'
+prometheusConfigs:
+  prometheus.yml: |
+    global:
+      scrape_interval: 15s
+      external_labels:
+        monitor: 'crushback-cluster'
 
-  scrape_configs:
-    # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
-    - job_name: 'prometheus'
-      static_configs:
-        - targets: [ 'cluster-metrics' ]
+    scrape_configs:
+      # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+      - job_name: 'prometheus'
+        static_configs:
+          - targets: [ 'cluster-metrics' ]
+  web.yml: |
+    basic_auth_users:
+      admin: $2b$12$rZIScw7Zrh8D9BPFjbbVsOnCfpbE.JS5GD8mcJqFUGqRm8l.bnhUy
 
 replicaCount: 1
 

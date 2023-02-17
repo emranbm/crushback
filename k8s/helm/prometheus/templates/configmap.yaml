@@ -5,5 +5,4 @@ metadata:
   labels:
     {{- include "prometheus.labels" . | nindent 4 }}
 data:
-  prometheus.yml:
-    {{- tpl .Values.prometheusConfig . | toYaml | indent 4 }}
+  {{- toYaml .Values.prometheusConfigs | nindent 2 }}
