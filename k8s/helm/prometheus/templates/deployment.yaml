@@ -41,6 +41,9 @@ spec:
           volumeMounts:
             - name: config-volume
               mountPath: /etc/prometheus/
+              readOnly: true
+            - name: {{ include "prometheus.fullname" }}-vol
+              mountPath: /prometheus/
           resources:
             requests:
             {{- toYaml .Values.resources | nindent 14 }}
@@ -62,3 +65,6 @@ spec:
         - name: config-volume
           configMap:
             name: {{ include "prometheus.config.configMapName" . }}
+        - name: {{ include "prometheus.fullname" }}-vol
+          persistentVolumeClaim:
+            claimName: {{ include "prometheus.fullname" }}-vol
