@@ -9,7 +9,7 @@ spec:
   selector:
     matchLabels:
       {{- include "prometheus.selectorLabels" . | nindent 6 }}
-  serviceName: {{ include "prometheus.fullname" . }}
+  serviceName: {{ include "prometheus.fullname" . }}-headless
   volumeClaimTemplates:
     - metadata:
         name: {{ include "prometheus.fullname" . }}-vol
@@ -42,15 +42,12 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           args:
-            - --web.config.file=web.yml
+            - --config.file=/etc/prometheus/prometheus.yml
+            - --web.config.file=/etc/prometheus/web.yml
           ports:
             - name: http
               containerPort: 9090
               protocol: TCP
-          livenessProbe:
-            httpGet:
-              path: /
-              port: http
           volumeMounts:
             - name: config-volume
               mountPath: /etc/prometheus/
