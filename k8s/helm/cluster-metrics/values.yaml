@@ -39,8 +39,8 @@ service:
   port: 80
 
 resources:
-  cpu: 200m
-  memory: 256Mi
+  cpu: 100m
+  memory: 100Mi
   ephemeral-storage: 150Mi
 
 nodeSelector: {}

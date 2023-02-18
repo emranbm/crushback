@@ -37,8 +37,8 @@ service:
   port: 8123
 
 resources:
-  cpu: 150m
-  memory: 128Mi
+  cpu: 100m
+  memory: 100Mi
   ephemeral-storage: 100Mi
 
 autoscaling:
