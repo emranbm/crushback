@@ -18,7 +18,7 @@ spec:
           - ReadWriteOnce
         resources:
           requests:
-            storage: {{ .Values.resources.storage }}
+            storage: {{ .Values.storage }}
         storageClassName: standard
   template:
     metadata:

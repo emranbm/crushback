@@ -19,6 +19,7 @@ prometheusConfigs:
       admin: $2b$12$rZIScw7Zrh8D9BPFjbbVsOnCfpbE.JS5GD8mcJqFUGqRm8l.bnhUy
 
 replicaCount: 1
+storage: 1Gi
 
 image:
   repository: prom/prometheus
@@ -52,7 +53,6 @@ resources:
   cpu: 200m
   memory: 256Mi
   ephemeral-storage: 150Mi
-  storage: 1Gi
 
 nodeSelector: {}
 
