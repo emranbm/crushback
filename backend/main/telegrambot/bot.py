@@ -3,12 +3,12 @@ import string
 
 import telegram.constants
 from asgiref.sync import sync_to_async
+from django.template.loader import render_to_string
 from telegram import Update
 from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler
 
-from django.template.loader import render_to_string
-
 from main import models
+from main.telegrambot.conversation_handlers.addcrush_handler import AddCrushHandler
 
 
 class TelegramBot:
@@ -21,6 +21,7 @@ class TelegramBot:
                 .get_updates_proxy_url(proxy_url)
         app = app_builder.build()
         app.add_handler(CommandHandler('start', TelegramBot._on_start))
+        app.add_handler(AddCrushHandler())
         app.run_polling()
 
     @staticmethod
