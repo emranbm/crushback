@@ -29,10 +29,10 @@ jobs:
       - run: docker-compose pull backend
       - name: Run unit tests
         run: >
-          CRUSHBACK_TEST_TELEGRAM_TEST_BOT_TOKEN={{ secrets.CRUSHBACK_TEST_TELEGRAM_TEST_BOT_TOKEN }}
-          CRUSHBACK_TEST_TELEGRAM_API_ID={{ secrets.CRUSHBACK_TEST_TELEGRAM_API_ID }}
-          CRUSHBACK_TEST_TELEGRAM_API_HASH={{ secrets.CRUSHBACK_TEST_TELEGRAM_API_HASH }}
-          CRUSHBACK_TEST_TELEGRAM_SESSION_STRING={{ secrets.CRUSHBACK_TEST_TELEGRAM_SESSION_STRING }}
+          CRUSHBACK_TEST_TELEGRAM_TEST_BOT_TOKEN=${{ secrets.CRUSHBACK_TEST_TELEGRAM_TEST_BOT_TOKEN }}
+          CRUSHBACK_TEST_TELEGRAM_API_ID=${{ secrets.CRUSHBACK_TEST_TELEGRAM_API_ID }}
+          CRUSHBACK_TEST_TELEGRAM_API_HASH=${{ secrets.CRUSHBACK_TEST_TELEGRAM_API_HASH }}
+          CRUSHBACK_TEST_TELEGRAM_SESSION_STRING=${{ secrets.CRUSHBACK_TEST_TELEGRAM_SESSION_STRING }}
           docker-compose run backend bash -c "sleep 2 && ./manage.py test"
         # TODO: Instead of blind sleep, check DB health.
   build-frontend:
