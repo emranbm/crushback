@@ -9,7 +9,7 @@ from django.test import TestCase
 from dotenv import load_dotenv
 from telethon import TelegramClient
 from telethon.sessions import StringSession
-from telethon.tl.custom import Message
+from telethon.tl.custom import Message, Conversation
 
 
 class AddcrushTest(TestCase):
@@ -63,12 +63,23 @@ class AddcrushTest(TestCase):
         await telegram_client.disconnect()
         await telegram_client.disconnected
 
+    @asynccontextmanager
+    async def _create_conversation(self) -> Conversation:
+        telegram_client_context_manager = self._create_telegram_client()
+        telegram_client = await telegram_client_context_manager.__aenter__()
+        conversation_context_manager = telegram_client.conversation(self.TEST_BOT_USERNAME, timeout=10)
+        conversation = await conversation_context_manager.__aenter__()
+        await sleep(0.5)  # A hack recommended at https://shallowdepth.online/posts/2021/12/end-to-end-tests-for-telegram-bots/
+
+        yield conversation
+
+        await conversation_context_manager.__aexit__(None, None, None)
+        await telegram_client_context_manager.__aexit__(None, None, None)
+
     async def test_should_reply_appropriate_message_on_addcrush_command(self):
-        async with self._create_telegram_client() as telegram_client:
-            async with telegram_client.conversation(self.TEST_BOT_USERNAME, timeout=10) as conv:
-                await sleep(0.5)  # A hack recommended at https://shallowdepth.online/posts/2021/12/end-to-end-tests-for-telegram-bots/
-                await conv.send_message('/addcrush')
-                msg: Message = await conv.get_response()
-                self.assertEqual("OK! Please send me your crush's username.\n"
-                                 "Or /cancel.(This is experimental and doesn't work yet!)",
-                                 msg.text)
+        async with self._create_conversation() as conv:
+            await conv.send_message('/addcrush')
+            msg: Message = await conv.get_response()
+            self.assertEqual("OK! Please send me your crush's username.\n"
+                             "Or /cancel.(This is experimental and doesn't work yet!)",
+                             msg.text)
