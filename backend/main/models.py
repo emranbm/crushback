@@ -47,6 +47,7 @@ class User(AbstractUser, Contactable):
 
 class Crush(Contactable):
     name = models.CharField(null=False, blank=True, default='', max_length=64)
+    crusher = models.ForeignKey(User, on_delete=models.CASCADE, related_name="crushes")
 
     def clean(self):
         super().clean()
