@@ -24,8 +24,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - run: echo "CRUSHBACK_VERSION=master-${GITHUB_SHA}" >> $GITHUB_ENV
-      - name: Docker Login
-        run: echo ${{ secrets.DOCKER_REGISTRY_TOKEN }} | docker login -u ${{ vars.DOCKER_REGISTRY_USER }} --password-stdin ${{ vars.DOCKER_REGISTRY_HOST }}
       - run: docker-compose pull backend
       - name: Run unit tests
         run: >
