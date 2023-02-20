@@ -30,7 +30,7 @@ class AddCrushHandler(ConversationHandler):
 
     @staticmethod
     async def _on_wrong_username_format(update: Update, context: ContextTypes.DEFAULT_TYPE) -> _State:
-        await update.message.reply_text("Please send her/his username in the form of @username\n"
+        await update.message.reply_text("Please send the username in the form of @username\n"
                                         "Or /cancel")
         return _State.RECEIVE_USERNAME
 
