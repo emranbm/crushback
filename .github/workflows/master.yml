@@ -73,6 +73,27 @@ jobs:
           --set recaptchaServerKey="${{ secrets.RECAPTCHA_SERVER_KEY }}"
           --set database.password="${{ secrets.POSTGRES_ROOT_PASSWORD }}"
           k8s/helm/crushback-backend/
+  deploy-telegrambot:
+    runs-on: ubuntu-20.04
+    needs:
+      - test-backend
+      - check-migrations
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Kube config
+        run: >
+          KUBE_API_SERVER="${{ vars.KUBE_API_SERVER }}"
+          KUBE_NAMESPACE="${{ vars.KUBE_NAMESPACE }}"
+          KUBE_API_TOKEN="${{ secrets.KUBE_API_TOKEN }}"
+          ./.github/scripts/setup-kubectl.sh
+      - name: Deploy Telegram Bot
+        run: >
+          helm upgrade -i crushback-telegrambot
+          --set image.tag="master-${GITHUB_SHA}"
+          --set telegramBotToken="${{ secrets.TELEGRAM_BOT_TOKEN }}"
+          --set secretKey="${{ secrets.CRUSHBACK_SECRET_KEY }}"
+          --set database.password="${{ secrets.POSTGRES_ROOT_PASSWORD }}"
+          k8s/helm/crushback-telegrambot/
   deploy-frontend:
     runs-on: ubuntu-20.04
     needs: build-frontend
@@ -106,25 +127,6 @@ jobs:
           --set username="${{ vars.SOCKS_USER }}"
           --set password="${{ secrets.SOCKS_PASS }}"
           k8s/helm/socks-proxy/
-  deploy-telegrambot:
-    runs-on: ubuntu-20.04
-    needs: test-backend
-    steps:
-      - uses: actions/checkout@v3
-      - name: Setup Kube config
-        run: >
-          KUBE_API_SERVER="${{ vars.KUBE_API_SERVER }}"
-          KUBE_NAMESPACE="${{ vars.KUBE_NAMESPACE }}"
-          KUBE_API_TOKEN="${{ secrets.KUBE_API_TOKEN }}"
-          ./.github/scripts/setup-kubectl.sh
-      - name: Deploy Telegram Bot
-        run: >
-          helm upgrade -i crushback-telegrambot
-          --set image.tag="master-${GITHUB_SHA}"
-          --set telegramBotToken="${{ secrets.TELEGRAM_BOT_TOKEN }}"
-          --set secretKey="${{ secrets.CRUSHBACK_SECRET_KEY }}"
-          --set database.password="${{ secrets.POSTGRES_ROOT_PASSWORD }}"
-          k8s/helm/crushback-telegrambot/
   deploy-prometheus:
     runs-on: ubuntu-20.04
     steps:
