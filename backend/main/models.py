@@ -37,8 +37,8 @@ class Contactable(_AutoCleanedModel):
 class User(AbstractUser, Contactable):
     first_name = models.CharField(null=False, blank=True, default='', max_length=64)
     last_name = models.CharField(null=False, blank=True, default='', max_length=64)
-    telegram_user_id = models.BigIntegerField(null=True, unique=True)
-    telegram_chat_id = models.BigIntegerField(null=True)
+    telegram_user_id = models.BigIntegerField(null=True, blank=True, unique=True)
+    telegram_chat_id = models.BigIntegerField(null=True, blank=True)
 
     @staticmethod
     def generate_random_username() -> str:
