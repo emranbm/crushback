@@ -33,6 +33,14 @@ jobs:
           CRUSHBACK_TEST_TELEGRAM_SESSION_STRING=${{ secrets.CRUSHBACK_TEST_TELEGRAM_SESSION_STRING }}
           docker-compose run backend bash -c "sleep 2 && ./manage.py test"
         # TODO: Instead of blind sleep, check DB health.
+  check-migrations:
+    runs-on: ubuntu-20.04
+    needs: build-backend
+    steps:
+      - uses: actions/checkout@v3
+      - run: echo "CRUSHBACK_VERSION=master-${GITHUB_SHA}" >> $GITHUB_ENV
+      - run: docker-compose pull backend
+      - run: docker-compose run backend sh -c "./manage.py makemigrations --dry-run --check"
   build-frontend:
     runs-on: ubuntu-20.04
     steps:
@@ -46,7 +54,9 @@ jobs:
       - run: docker-compose push frontend
   deploy-backend:
     runs-on: ubuntu-20.04
-    needs: test-backend
+    needs:
+      - test-backend
+      - check-migrations
     steps:
       - uses: actions/checkout@v3
       - name: Setup Kube config
