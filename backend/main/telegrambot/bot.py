@@ -1,6 +1,3 @@
-import random
-import string
-
 import telegram.constants
 from asgiref.sync import sync_to_async
 from django.template.loader import render_to_string
@@ -8,6 +5,7 @@ from telegram import Update
 from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler
 
 from main import models
+from main.models import User
 from main.telegrambot.conversation_handlers.addcrush_handler import AddCrushHandler
 
 
@@ -39,7 +37,7 @@ class TelegramBot:
             defaults={
                 'telegram_chat_id': update.effective_chat.id,
                 'telegram_username': update.effective_user.username,
-                'username': ''.join(random.choice(string.ascii_letters) for i in range(64)),
+                'username': User.generate_random_username(),
                 'first_name': update.effective_user.first_name,
                 'last_name': update.effective_user.last_name or '',
             })

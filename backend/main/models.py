@@ -14,4 +14,4 @@ class User(AbstractUser):
 
     @staticmethod
     def generate_random_username() -> str:
-        ''.join(random.choice(string.ascii_letters) for i in range(64))
+        return ''.join(random.choice(string.ascii_letters) for i in range(64))
