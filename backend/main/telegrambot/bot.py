@@ -1,5 +1,6 @@
 import telegram.constants
 from asgiref.sync import sync_to_async
+from django.contrib.auth.hashers import make_password
 from django.template.loader import render_to_string
 from telegram import Update
 from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler
@@ -40,6 +41,7 @@ class TelegramBot:
                 'username': User.generate_random_username(),
                 'first_name': update.effective_user.first_name,
                 'last_name': update.effective_user.last_name or '',
+                'password': make_password(None),
             })
         if not created:
             await TelegramBot._update_user_if_needed(user, update)
