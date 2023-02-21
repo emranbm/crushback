@@ -9,13 +9,13 @@ class _State(Enum):
     RECEIVE_USERNAME = 1
 
 
-class AddCrushHandler(ConversationHandler):
+class AddcrushHandler(ConversationHandler):
     def __init__(self):
         super().__init__(
             entry_points=[CommandHandler('addcrush', self._on_addcruch)],
             states={
                 _State.RECEIVE_USERNAME: [
-                    MessageHandler(filters.Regex("^@.*"), self._crush_username_entered),
+                    MessageHandler(filters.Regex("^@.*"), self._on_crush_username_entered),
                     MessageHandler(filters.ALL & (~filters.COMMAND), self._on_wrong_username_format),
                 ]
             },
@@ -35,7 +35,7 @@ class AddCrushHandler(ConversationHandler):
         return _State.RECEIVE_USERNAME
 
     @staticmethod
-    async def _crush_username_entered(update: Update, context: ContextTypes.DEFAULT_TYPE) -> _State:
+    async def _on_crush_username_entered(update: Update, context: ContextTypes.DEFAULT_TYPE) -> _State:
         await update.message.reply_text(f"OK! your crush is {update.message.text}!\n"
                                         "But I'm still under construction and can't save it.\n"
                                         "I swear nothing is even saved by me!\n\n"

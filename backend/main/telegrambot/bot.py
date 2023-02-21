@@ -7,7 +7,7 @@ from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler
 
 from main import models
 from main.models import User
-from main.telegrambot.conversation_handlers.addcrush_handler import AddCrushHandler
+from main.telegrambot.conversation_handlers.addcrush_handler import AddcrushHandler
 
 
 class TelegramBot:
@@ -20,7 +20,7 @@ class TelegramBot:
                 .get_updates_proxy_url(proxy_url)
         app = app_builder.build()
         app.add_handler(CommandHandler('start', TelegramBot._on_start))
-        app.add_handler(AddCrushHandler())
+        app.add_handler(AddcrushHandler())
         app.run_polling()
 
     @staticmethod
