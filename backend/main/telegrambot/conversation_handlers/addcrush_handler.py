@@ -3,6 +3,9 @@ from enum import Enum
 from telegram import Update
 from telegram.ext import ConversationHandler, CommandHandler, ContextTypes, MessageHandler, filters
 
+from main.models import Crush
+from main.telegrambot import utils
+
 
 class _State(Enum):
     START = 0
@@ -36,10 +39,14 @@ class AddcrushHandler(ConversationHandler):
 
     @staticmethod
     async def _on_crush_username_entered(update: Update, context: ContextTypes.DEFAULT_TYPE) -> _State:
-        await update.message.reply_text(f"OK! your crush is {update.message.text}!\n"
-                                        "But I'm still under construction and can't save it.\n"
-                                        "I swear nothing is even saved by me!\n\n"
-                                        "Please text me later to check if I've got ready for you.")
+        user = await utils.create_or_update_user(update)
+        crush_username = update.message.text
+        await Crush.objects.acreate(crusher=user, telegram_username=crush_username.lstrip("@"))
+        await update.message.reply_text(f"OK! your crush ({crush_username}) has been saved.\n"
+                                        "I won't tell anybody that you have a crush on someone.\n"
+                                        "I will check periodically if she/he has also a crush on you; and if so, "
+                                        "I'll send a private message to you both!\n"
+                                        "Keep in touch with me!")
         return ConversationHandler.END
 
     @staticmethod
