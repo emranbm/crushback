@@ -1,0 +1,15 @@
+[[source]]
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+
+[dev-packages]
+telethon = "==1.27.0"
+pysocks = "==1.7.1"
+aiounittest = "==1.4.2"
+python-dotenv = "==0.21.1"
+
+[requires]
+python_version = "3.8"

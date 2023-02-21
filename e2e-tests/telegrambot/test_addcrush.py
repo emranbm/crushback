@@ -4,14 +4,14 @@ from contextlib import asynccontextmanager
 from subprocess import Popen
 
 import socks
-from django.test import TestCase
+from aiounittest import AsyncTestCase
 from dotenv import load_dotenv
 from telethon import TelegramClient
 from telethon.sessions import StringSession
 from telethon.tl.custom import Message, Conversation
 
 
-class AddcrushTest(TestCase):
+class AddcrushTest(AsyncTestCase):
     TEST_BOT_USERNAME = "crushback_test_bot"
 
     bot_process: Popen = None
@@ -28,6 +28,8 @@ class AddcrushTest(TestCase):
         cls.use_socks_proxy = bool(cls.socks_host and cls.socks_port)
 
         start_bot_command = [
+            "pipenv",
+            "run",
             "./manage.py",
             "telegrambot",
             "--token",
@@ -38,7 +40,7 @@ class AddcrushTest(TestCase):
                 "--proxy",
                 f"socks5://{cls.socks_host}:{cls.socks_port}",
             ]
-        cls.bot_process = Popen(start_bot_command)
+        cls.bot_process = Popen(start_bot_command, cwd="../../backend/")
 
     @classmethod
     def tearDownClass(cls):
