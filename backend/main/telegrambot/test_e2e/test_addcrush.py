@@ -1,4 +1,3 @@
-import asyncio
 import os
 from asyncio import sleep
 from contextlib import asynccontextmanager
@@ -83,3 +82,4 @@ class AddcrushTest(TestCase):
             self.assertEqual("OK! Please send me your crush's username.\n"
                              "Or /cancel.(This is experimental and doesn't work yet!)",
                              msg.text)
+            await conv.send_message('/cancel')
