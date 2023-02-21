@@ -35,6 +35,7 @@ def create_default_update() -> Update:
     update.effective_user.first_name = TEST_USER_FIRST_NAME
     update.effective_user.last_name = TEST_USER_LAST_NAME
     update.effective_chat.id = TEST_CHAT_ID
+    update.message.reply_text = AsyncMock()
     return update
 
 
