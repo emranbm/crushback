@@ -19,10 +19,14 @@ jobs:
         run: curl https://raw.githubusercontent.com/pypa/pipenv/master/get-pipenv.py | python
       - run: pipenv install
         working-directory: ./backend/
+      - name: Start database
+        run: docker-compose up -d database
+      - name: Wait for DB to get ready
+        # TODO: Instead of blind sleep, check DB health.
+        run: sleep 2
       - name: Run unit tests
         working-directory: ./backend/
-        # TODO: Instead of blind sleep, check DB health.
-        run: docker-compose run backend bash -c "sleep 2 && ./manage.py test"
+        run: pipenv run python ./manage.py test
   end-to-end-tests:
     runs-on: ubuntu-20.04
     steps:
@@ -33,8 +37,13 @@ jobs:
           cache: 'pipenv'
       - name: Install pipenv
         run: curl https://raw.githubusercontent.com/pypa/pipenv/master/get-pipenv.py | python
-      - run: pipenv install
+      - run: pipenv install --dev
         working-directory: ./e2e-tests/telegrambot/
+      - name: Make Pipenv also accessible inside tests
+        run: sudo cp `which pipenv` /usr/bin/pipenv
+      - name: Remove .env due to a bug in dotenv package :/
+        working-directory: ./e2e-tests/telegrambot/
+        run: rm .env
       - name: Run end-to-end tests
         working-directory: ./e2e-tests/telegrambot/
         run: >
@@ -42,7 +51,7 @@ jobs:
           CRUSHBACK_TEST_TELEGRAM_API_ID=${{ secrets.CRUSHBACK_TEST_TELEGRAM_API_ID }}
           CRUSHBACK_TEST_TELEGRAM_API_HASH=${{ secrets.CRUSHBACK_TEST_TELEGRAM_API_HASH }}
           CRUSHBACK_TEST_TELEGRAM_SESSION_STRING=${{ secrets.CRUSHBACK_TEST_TELEGRAM_SESSION_STRING }}
-          pipenv run ./manage.py test
+          pipenv run python -m unittest
   check-migrations:
     runs-on: ubuntu-20.04
     steps:
@@ -55,7 +64,7 @@ jobs:
         run: curl https://raw.githubusercontent.com/pypa/pipenv/master/get-pipenv.py | python
       - run: pipenv install
         working-directory: ./backend/
-      - run: ./manage.py makemigrations --dry-run --check
+      - run: pipenv run python ./manage.py makemigrations --dry-run --check
         working-directory: ./backend/
   build-backend-image:
     runs-on: ubuntu-20.04

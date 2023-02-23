@@ -1,4 +1,5 @@
 import os
+import subprocess
 from asyncio import sleep
 from contextlib import asynccontextmanager
 from subprocess import Popen
@@ -13,6 +14,7 @@ from telethon.tl.custom import Message, Conversation
 
 class AddcrushTest(AsyncTestCase):
     TEST_BOT_USERNAME = "crushback_test_bot"
+    BACKEND_PATH = "../../backend/"
 
     bot_process: Popen = None
 
@@ -26,10 +28,12 @@ class AddcrushTest(AsyncTestCase):
         cls.socks_host = os.environ.get('CRUSHBACK_TEST_TELEGRAM_SOCKS_HOST')
         cls.socks_port = os.environ.get('CRUSHBACK_TEST_TELEGRAM_SOCKS_PORT')
         cls.use_socks_proxy = bool(cls.socks_host and cls.socks_port)
-
+        stdout: bytes = subprocess.check_output(["bash", "-c", "pipenv --venv"],
+                                                cwd=cls.BACKEND_PATH,
+                                                env={})
+        backend_venv_path = stdout.decode("utf-8").strip()
         start_bot_command = [
-            "pipenv",
-            "run",
+            f"{backend_venv_path}/bin/python3.8",
             "./manage.py",
             "telegrambot",
             "--token",
@@ -40,7 +44,7 @@ class AddcrushTest(AsyncTestCase):
                 "--proxy",
                 f"socks5://{cls.socks_host}:{cls.socks_port}",
             ]
-        cls.bot_process = Popen(start_bot_command, cwd="../../backend/")
+        cls.bot_process = Popen(start_bot_command, cwd=cls.BACKEND_PATH)
 
     @classmethod
     def tearDownClass(cls):
