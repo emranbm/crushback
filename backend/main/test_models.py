@@ -1,7 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
-from main.models import Crush, User
+from main.models import Crush, User, MatchedRecord
 
 
 class CrushTest(TestCase):
@@ -14,3 +14,24 @@ class CrushTest(TestCase):
 
     def test_can_save_crush_without_name(self):
         Crush(telegram_username="test", crusher=self.user).save()
+
+
+class MatchedRecordTest(TestCase):
+    def test_left_user_id_should_be_lower_than_right_user_id(self):
+        user1 = User.objects.create_user("test1")
+        user2 = User.objects.create_user("test2")
+        wrong_record = MatchedRecord(left_user_id=max(user1.pk, user2.pk),
+                                     right_user_id=min(user1.pk, user2.pk))
+        with self.assertRaises(AssertionError):
+            wrong_record.save()
+
+    def test_multiple_records_with_same_users_should_be_forbidden(self):
+        user1 = User.objects.create_user("test1")
+        user2 = User.objects.create_user("test2")
+        record1 = MatchedRecord(left_user_id=min(user1.pk, user2.pk),
+                                right_user_id=max(user1.pk, user2.pk))
+        record2 = MatchedRecord(left_user_id=min(user1.pk, user2.pk),
+                                right_user_id=max(user1.pk, user2.pk))
+        record1.save()
+        with self.assertRaises(ValidationError):
+            record2.save()

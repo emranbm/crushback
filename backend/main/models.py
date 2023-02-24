@@ -56,3 +56,20 @@ class Crush(Contactable):
     def _check_at_least_one_contact_point_should_be_non_null(self) -> None:
         if not self.telegram_username:
             raise ValidationError("Crush should have at least one contact point.")
+
+
+class MatchedRecord(_AutoCleanedModel):
+    # Convention: The user with lower id is left, and the one with greater id is right.
+    left_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='+', null=False)
+    right_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='+', null=False)
+    matched_at = models.DateTimeField(auto_now_add=True)
+    informed = models.BooleanField(null=False, default=False)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['left_user', 'right_user'], name='unique_matched_record_users')
+        ]
+
+    def clean(self):
+        if self.left_user_id >= self.right_user_id:
+            raise AssertionError("Convention violated: The user with lower id should be left, and the one with greater id should be right.")
