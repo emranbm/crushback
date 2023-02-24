@@ -73,3 +73,10 @@ class MatchedRecord(_AutoCleanedModel):
     def clean(self):
         if self.left_user_id >= self.right_user_id:
             raise AssertionError("Convention violated: The user with lower id should be left, and the one with greater id should be right.")
+
+    @staticmethod
+    def create_new_match(user_id_1: int, user_id_2: int) -> "MatchedRecord":
+        record = MatchedRecord(left_user_id=min(user_id_1, user_id_2),
+                               right_user_id=max(user_id_1, user_id_2))
+        record.save()
+        return record

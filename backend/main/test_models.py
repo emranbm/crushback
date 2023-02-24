@@ -28,10 +28,6 @@ class MatchedRecordTest(TestCase):
     def test_multiple_records_with_same_users_should_be_forbidden(self):
         user1 = User.objects.create_user("test1")
         user2 = User.objects.create_user("test2")
-        record1 = MatchedRecord(left_user_id=min(user1.pk, user2.pk),
-                                right_user_id=max(user1.pk, user2.pk))
-        record2 = MatchedRecord(left_user_id=min(user1.pk, user2.pk),
-                                right_user_id=max(user1.pk, user2.pk))
-        record1.save()
+        MatchedRecord.create_new_match(user1.pk, user2.pk)
         with self.assertRaises(ValidationError):
-            record2.save()
+            MatchedRecord.create_new_match(user1.pk, user2.pk)
