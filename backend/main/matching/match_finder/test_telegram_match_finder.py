@@ -4,7 +4,7 @@ from main.matching.match_finder.telegram_match_finder import TelegramMatchFinder
 from main.models import User, Crush
 
 
-class MatchFinderTest(TestCase):
+class TelegramMatchFinderTest(TestCase):
     def test_nothing_is_found_with_empty_database(self):
         new_matches = TelegramMatchFinder().save_new_matched_records()
         self.assertEqual(0, len(new_matches))
