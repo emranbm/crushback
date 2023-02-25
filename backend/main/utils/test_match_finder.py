@@ -36,7 +36,6 @@ class MatchFinderTest(TestCase):
         new_matches = MatchFinder.save_new_matched_records()
         self.assertEqual(0, len(new_matches))
 
-    @skip("Feature not completed")
     def test_should_not_match_without_crushback(self):
         self._create_user_and_their_crush("tg1", "crush1")
         self._create_user_and_their_crush("crush1", "crush2")
