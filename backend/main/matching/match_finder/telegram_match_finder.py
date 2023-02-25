@@ -5,15 +5,15 @@ from django.core.exceptions import ValidationError
 from django.db import connection
 from django.db.backends.utils import CursorWrapper
 
+from main.matching.match_finder.base import MatchFinder
 from main.models import MatchedRecord, User, Crush
 from main.utils.db_utils import get_table_name, get_column_name as col
 
 logger = logging.getLogger(__name__)
 
 
-class MatchFinder:
-    @staticmethod
-    def save_new_matched_records() -> List[MatchedRecord]:
+class TelegramMatchFinder(MatchFinder):
+    def save_new_matched_records(self) -> List[MatchedRecord]:
         with connection.cursor() as cursor:
             cursor: CursorWrapper
             cursor.execute(f"SELECT user1.id, user2.id "

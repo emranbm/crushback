@@ -1,6 +1,6 @@
 from django.core.management import BaseCommand
 
-from main.matching.match_finder import MatchFinder
+from main.matching.match_finder.telegram_match_finder import TelegramMatchFinder
 
 
 class Command(BaseCommand):
@@ -8,6 +8,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         self.stdout.write("Finding matches...")
-        new_matches = MatchFinder.save_new_matched_records()
+        new_matches = TelegramMatchFinder().save_new_matched_records()
         self.stdout.write("Done!")
         self.stdout.write(f"{len(new_matches)} new matches have been saved.")
