@@ -2,8 +2,8 @@ from unittest import skip
 
 from django.test import TestCase
 
+from main.matching.match_finder import MatchFinder
 from main.models import User, Crush
-from main.utils.match_finder import MatchFinder
 
 
 class MatchFinderTest(TestCase):

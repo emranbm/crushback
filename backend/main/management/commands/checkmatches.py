@@ -1,6 +1,6 @@
 from django.core.management import BaseCommand
 
-from main.utils.match_finder import MatchFinder
+from main.matching.match_finder import MatchFinder
 
 
 class Command(BaseCommand):
