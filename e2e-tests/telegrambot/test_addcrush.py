@@ -14,7 +14,6 @@ from telethon.tl.custom import Message, Conversation
 
 
 class AddcrushTest(AsyncTestCase):
-    TEST_BOT_USERNAME = "crushback_test_bot"
     BACKEND_PATH = "../../backend/"
 
     bot_process: Popen = None
@@ -22,27 +21,29 @@ class AddcrushTest(AsyncTestCase):
     @classmethod
     def setUpClass(cls):
         load_dotenv()
-
         cls.api_id = int(os.environ['CRUSHBACK_TEST_TELEGRAM_API_ID'])
         cls.api_hash = os.environ['CRUSHBACK_TEST_TELEGRAM_API_HASH']
         cls.session_str = os.environ['CRUSHBACK_TEST_TELEGRAM_SESSION_STRING']
         cls.proxy_url = os.environ.get('CRUSHBACK_TELEGRAM_PROXY_URL', None)
-        cls.bot_token = os.environ['CRUSHBACK_TELEGRAM_BOT_TOKEN']
+        cls.test_bot_username = os.environ['CRUSHBACK_TELEGRAM_BOT_USERNAME']
+        cls.bot_process = cls._run_bot_process()
+
+    @classmethod
+    def _run_bot_process(cls):
         stdout: bytes = subprocess.check_output(["bash", "-c", "pipenv --venv"],
                                                 cwd=cls.BACKEND_PATH,
                                                 env={})
         backend_venv_path = stdout.decode("utf-8").strip()
-        start_bot_command = [
+        env = {'CRUSHBACK_TELEGRAM_BOT_TOKEN': os.environ['CRUSHBACK_TELEGRAM_BOT_TOKEN']}
+        if cls.proxy_url is not None:
+            env['CRUSHBACK_TELEGRAM_PROXY_URL'] = cls.proxy_url
+        return Popen([
             f"{backend_venv_path}/bin/python3.8",
             "./manage.py",
             "telegrambot",
-        ]
-        cls.bot_process = Popen(start_bot_command,
-                                cwd=cls.BACKEND_PATH,
-                                env={
-                                    'CRUSHBACK_TELEGRAM_PROXY_URL': cls.proxy_url,
-                                    'CRUSHBACK_TELEGRAM_BOT_TOKEN': cls.bot_token,
-                                })
+        ],
+            cwd=cls.BACKEND_PATH,
+            env=env)
 
     @classmethod
     def tearDownClass(cls):
@@ -72,7 +73,7 @@ class AddcrushTest(AsyncTestCase):
     async def _create_conversation(self) -> Conversation:
         telegram_client_context_manager = self._create_telegram_client()
         telegram_client = await telegram_client_context_manager.__aenter__()
-        conversation_context_manager = telegram_client.conversation(self.TEST_BOT_USERNAME, timeout=10)
+        conversation_context_manager = telegram_client.conversation(self.test_bot_username, timeout=10)
         conversation = await conversation_context_manager.__aenter__()
         await sleep(0.5)  # A hack recommended at https://shallowdepth.online/posts/2021/12/end-to-end-tests-for-telegram-bots/
 
