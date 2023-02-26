@@ -3,6 +3,7 @@ import subprocess
 from asyncio import sleep
 from contextlib import asynccontextmanager
 from subprocess import Popen
+from urllib.parse import urlparse
 
 import socks
 from aiounittest import AsyncTestCase
@@ -25,9 +26,8 @@ class AddcrushTest(AsyncTestCase):
         cls.api_id = int(os.environ['CRUSHBACK_TEST_TELEGRAM_API_ID'])
         cls.api_hash = os.environ['CRUSHBACK_TEST_TELEGRAM_API_HASH']
         cls.session_str = os.environ['CRUSHBACK_TEST_TELEGRAM_SESSION_STRING']
-        cls.socks_host = os.environ.get('CRUSHBACK_TEST_TELEGRAM_SOCKS_HOST')
-        cls.socks_port = os.environ.get('CRUSHBACK_TEST_TELEGRAM_SOCKS_PORT')
-        cls.use_socks_proxy = bool(cls.socks_host and cls.socks_port)
+        cls.proxy_url = os.environ.get('CRUSHBACK_TELEGRAM_PROXY_URL', None)
+        cls.bot_token = os.environ['CRUSHBACK_TELEGRAM_BOT_TOKEN']
         stdout: bytes = subprocess.check_output(["bash", "-c", "pipenv --venv"],
                                                 cwd=cls.BACKEND_PATH,
                                                 env={})
@@ -36,15 +36,13 @@ class AddcrushTest(AsyncTestCase):
             f"{backend_venv_path}/bin/python3.8",
             "./manage.py",
             "telegrambot",
-            "--token",
-            os.environ['CRUSHBACK_TEST_TELEGRAM_TEST_BOT_TOKEN'],
         ]
-        if cls.use_socks_proxy:
-            start_bot_command += [
-                "--proxy",
-                f"socks5://{cls.socks_host}:{cls.socks_port}",
-            ]
-        cls.bot_process = Popen(start_bot_command, cwd=cls.BACKEND_PATH)
+        cls.bot_process = Popen(start_bot_command,
+                                cwd=cls.BACKEND_PATH,
+                                env={
+                                    'CRUSHBACK_TELEGRAM_PROXY_URL': cls.proxy_url,
+                                    'CRUSHBACK_TELEGRAM_BOT_TOKEN': cls.bot_token,
+                                })
 
     @classmethod
     def tearDownClass(cls):
@@ -57,8 +55,10 @@ class AddcrushTest(AsyncTestCase):
         telegram_client = TelegramClient(
             StringSession(self.session_str), self.api_id, self.api_hash, sequential_updates=True
         )
-        if self.use_socks_proxy:
-            telegram_client.set_proxy((socks.PROXY_TYPE_SOCKS5, self.socks_host, int(self.socks_port)))
+        if self.proxy_url is not None:
+            u = urlparse(self.proxy_url)
+            assert u.scheme == "socks5", "Expected to use socks5 proxy; change if it's not the case."
+            telegram_client.set_proxy((socks.PROXY_TYPE_SOCKS5, u.hostname, u.port or 80))
         await telegram_client.connect()
         await telegram_client.get_me()
         await telegram_client.get_dialogs()
