@@ -1,7 +1,7 @@
 from django.test import TestCase
 
+from main import testing_utils
 from main.models import Crush
-from main.telegrambot import testing_utils
 from main.telegrambot.conversation_handlers.addcrush_handler import AddcrushHandler
 
 

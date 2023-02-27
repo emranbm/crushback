@@ -1,6 +1,7 @@
 import logging
 from typing import List
 
+from asgiref.sync import sync_to_async
 from django.core.exceptions import ValidationError
 from django.db import connection
 from django.db.backends.utils import CursorWrapper
@@ -13,7 +14,10 @@ logger = logging.getLogger(__name__)
 
 
 class TelegramMatchFinder(MatchFinder):
-    def save_new_matched_records(self) -> List[MatchedRecord]:
+    async def save_new_matched_records(self) -> List[MatchedRecord]:
+        return await sync_to_async(self._save_new_matched_records)()
+
+    def _save_new_matched_records(self) -> List[MatchedRecord]:
         with connection.cursor() as cursor:
             cursor: CursorWrapper
             cursor.execute(f"SELECT user1.id, user2.id "

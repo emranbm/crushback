@@ -1,8 +1,7 @@
 from asgiref.sync import sync_to_async
 from django.test import TestCase
 
-from main import models
-from main.telegrambot import testing_utils
+from main import models, testing_utils
 from main.telegrambot.engine import TelegramBotEngine
 
 
