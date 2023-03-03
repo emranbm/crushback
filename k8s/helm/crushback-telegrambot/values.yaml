@@ -14,6 +14,10 @@ image:
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
+  command: python
+  args:
+    - ./manage.py
+    - telegrambot
 
 database:
   host: postgresql
