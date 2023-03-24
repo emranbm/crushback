@@ -49,6 +49,12 @@ class Crush(Contactable):
     name = models.CharField(null=False, blank=True, default='', max_length=64)
     crusher = models.ForeignKey(User, on_delete=models.CASCADE, related_name="crushes")
 
+    class Meta:
+        constraints = [
+            # Should be checked differently whenever contact points other than Telegram are also supported.
+            models.UniqueConstraint(fields=['telegram_username', 'crusher'], name="duplicate_crush_preventer")
+        ]
+
     def clean(self):
         super().clean()
         self._check_at_least_one_contact_point_should_be_non_null()

@@ -15,6 +15,12 @@ class CrushTest(TestCase):
     def test_can_save_crush_without_name(self):
         Crush(telegram_username="test", crusher=self.user).save()
 
+    def test_can_not_save_duplicate_crush(self):
+        Crush(telegram_username="test", crusher=self.user).save()
+        with self.assertRaises(ValidationError):
+            Crush(telegram_username="test", crusher=self.user).save()
+        self.assertEqual(1, Crush.objects.filter(telegram_username="test").count())
+
 
 class MatchedRecordTest(TestCase):
     def test_left_user_id_should_be_lower_than_right_user_id(self):

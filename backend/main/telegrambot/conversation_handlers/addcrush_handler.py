@@ -1,5 +1,8 @@
 from enum import Enum
 
+import telegram
+from django.core.exceptions import ValidationError
+from django.template.loader import render_to_string
 from telegram import Update
 from telegram.ext import ConversationHandler, CommandHandler, ContextTypes, MessageHandler, filters
 
@@ -41,12 +44,17 @@ class AddcrushHandler(ConversationHandler):
     async def _on_crush_username_entered(update: Update, context: ContextTypes.DEFAULT_TYPE) -> _State:
         user = await utils.create_or_update_user(update)
         crush_username = update.message.text
-        await Crush.objects.acreate(crusher=user, telegram_username=crush_username.lstrip("@"))
-        await update.message.reply_text(f"OK! your crush ({crush_username}) has been saved.\n"
-                                        "I won't tell anybody that you have a crush on someone.\n"
-                                        "I will check periodically if she/he has also a crush on you; and if so, "
-                                        "I'll send a private message to you both!\n"
-                                        "Keep in touch with me!")
+        try:
+            await Crush.objects.acreate(crusher=user, telegram_username=crush_username.lstrip("@"))
+        except ValidationError:
+            message = render_to_string('duplicate_add_crush_error.html')
+            await update.message.reply_html(message)
+        except Exception:
+            message = render_to_string('unexpected_error.html')
+            await update.message.reply_html(message)
+        else:
+            message = render_to_string('crush_saved_ack.html', {'crush_username': crush_username})
+            await update.message.reply_html(message)
         return ConversationHandler.END
 
     @staticmethod
