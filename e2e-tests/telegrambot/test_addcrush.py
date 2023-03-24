@@ -21,9 +21,9 @@ class AddcrushTest(AsyncTestCase):
     @classmethod
     def setUpClass(cls):
         load_dotenv()
-        cls.api_id = int(os.environ['CRUSHBACK_TEST_TELEGRAM_API_ID'])
-        cls.api_hash = os.environ['CRUSHBACK_TEST_TELEGRAM_API_HASH']
-        cls.session_str = os.environ['CRUSHBACK_TEST_TELEGRAM_SESSION_STRING']
+        cls.api_id = int(os.environ['CRUSHBACK_TELEGRAM_CLIENT1_API_ID'])
+        cls.api_hash = os.environ['CRUSHBACK_TELEGRAM_CLIENT1_API_HASH']
+        cls.session_str = os.environ['CRUSHBACK_TELEGRAM_CLIENT1_SESSION_STRING']
         cls.proxy_url = os.environ.get('CRUSHBACK_TELEGRAM_PROXY_URL', None)
         cls.test_bot_username = os.environ['CRUSHBACK_TELEGRAM_BOT_USERNAME']
         cls.bot_process = cls._run_bot_process()
@@ -83,6 +83,15 @@ class AddcrushTest(AsyncTestCase):
         await telegram_client_context_manager.__aexit__(None, None, None)
 
     async def test_should_reply_appropriate_message_on_addcrush_command(self):
+        async with self._create_conversation() as conv:
+            await conv.send_message('/addcrush')
+            msg: Message = await conv.get_response()
+            self.assertEqual("OK! Please send me your crush's username.\n"
+                             "Or /cancel.(This is experimental and doesn't work yet!)",
+                             msg.text)
+            await conv.send_message('/cancel')
+
+    async def test_user_should_be_informed_if_his_crush_is_matched(self):
         async with self._create_conversation() as conv:
             await conv.send_message('/addcrush')
             msg: Message = await conv.get_response()

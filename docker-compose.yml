@@ -16,9 +16,9 @@ services:
       - CRUSHBACK_TELEGRAM_BOT_TOKEN
       - CRUSHBACK_TELEGRAM_PROXY_URL
       # Environment variables used by tests
-      - CRUSHBACK_TEST_TELEGRAM_API_ID
-      - CRUSHBACK_TEST_TELEGRAM_API_HASH
-      - CRUSHBACK_TEST_TELEGRAM_SESSION_STRING
+      - CRUSHBACK_TELEGRAM_CLIENT1_API_ID
+      - CRUSHBACK_TELEGRAM_CLIENT1_API_HASH
+      - CRUSHBACK_TELEGRAM_CLIENT1_SESSION_STRING
     volumes:
       - backend_static_files:/app/static/
     ports:
