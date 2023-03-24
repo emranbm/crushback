@@ -15,7 +15,6 @@ class AddCrushTest(TelegramBotTestCase):
                              msg.text)
             await conv.send_message('/cancel')
 
-    @skip("Not implemented yet")
     async def test_user_should_be_informed_if_his_crush_is_matched(self):
         async with self._create_conversation(1) as conv:
             await conv.send_message('/addcrush')
@@ -27,5 +26,5 @@ class AddCrushTest(TelegramBotTestCase):
             await conv.get_response()
             await conv.send_message(f'@{self.clients[0]["username"]}')
             await conv.get_response()  # Crush saved ack
-            msg: Message = await conv.get_response()  # Crush matched message
+            msg: Message = await conv.get_response(timeout=self.CHECK_MATCH_PERIOD_SECONDS + 1)  # Crush matched message
             self.assertTrue("congratulations" in msg.text.lower())

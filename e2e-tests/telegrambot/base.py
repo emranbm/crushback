@@ -16,8 +16,10 @@ from telethon.tl.custom import Conversation
 class TelegramBotTestCase(AsyncTestCase):
     ROOT_DIR = "../.."
     BACKEND_DIR = f"{ROOT_DIR}/backend/"
+    CHECK_MATCH_PERIOD_SECONDS = 1
 
     bot_process: subprocess.Popen = None
+    check_matches_process: subprocess.Popen = None
 
     @classmethod
     def setUpClass(cls):
@@ -43,8 +45,9 @@ class TelegramBotTestCase(AsyncTestCase):
         cls.test_bot_username = os.environ['CRUSHBACK_TELEGRAM_BOT_USERNAME']
         cls.backend_venv_path = cls._get_backend_venv_path()
         cls._start_database()
-        cls.bot_process = cls._run_bot_process()
-        cls._run_migrations()
+        cls._run_backend_manage_command("migrate").communicate()
+        cls.bot_process = cls._run_backend_manage_command("telegrambot")
+        cls.check_matches_process = cls._run_backend_manage_command("checkmatches", "--period", str(cls.CHECK_MATCH_PERIOD_SECONDS))
 
     @classmethod
     def _get_backend_venv_path(cls):
@@ -66,30 +69,21 @@ class TelegramBotTestCase(AsyncTestCase):
                          cwd=cls.ROOT_DIR).communicate()
 
     @classmethod
-    def _run_migrations(cls):
-        subprocess.Popen([
-            f"{cls.backend_venv_path}/bin/python3.8",
-            "./manage.py",
-            "migrate"
-        ],
-            cwd=cls.BACKEND_DIR)
-
-    @classmethod
-    def _run_bot_process(cls):
+    def _run_backend_manage_command(cls, *cmd: str) -> subprocess.Popen:
         env = {'CRUSHBACK_TELEGRAM_BOT_TOKEN': os.environ['CRUSHBACK_TELEGRAM_BOT_TOKEN']}
         if cls.proxy_url is not None:
             env['CRUSHBACK_TELEGRAM_PROXY_URL'] = cls.proxy_url
-        return subprocess.Popen([
-            f"{cls.backend_venv_path}/bin/python3.8",
-            "./manage.py",
-            "telegrambot",
-        ],
-            cwd=cls.BACKEND_DIR,
-            env=env)
+        return subprocess.Popen((
+                                    f"{cls.backend_venv_path}/bin/python3.8",
+                                    "./manage.py",
+                                ) + cmd,
+                                cwd=cls.BACKEND_DIR,
+                                env=env)
 
     @classmethod
     def tearDownClass(cls):
         cls.bot_process.kill()
+        cls.check_matches_process.kill()
         cls._stop_database()
 
     # Could not use setUp standard methods!

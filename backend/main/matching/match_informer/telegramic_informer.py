@@ -1,4 +1,5 @@
-from asgiref.sync import sync_to_async
+import telegram
+from django.template.loader import render_to_string
 
 from main.matching.match_informer.base import MatchInformer
 from main.models import MatchedRecord
@@ -11,14 +12,13 @@ class TelegramicInformer(MatchInformer):
         app = TelegramBotEngine.get_app()
         user1 = await get_model_prop(matched_record, 'left_user')
         user2 = await get_model_prop(matched_record, 'right_user')
-        await app.bot.send_message(user1.telegram_chat_id,
-                                   f"Congratulations!\n"
-                                   f"Your crush @{user2.telegram_username} already has a crush on you!\n"
-                                   f"She/He is also informed! Now you both know that you have a crush on each other.\n"
-                                   f"Have a good love!")
-        await app.bot.send_message(user2.telegram_chat_id,
-                                   f"Congratulations!\n"
-                                   f"Your crush @{user1.telegram_username} already has a crush on you!\n"
-                                   f"She/He is also informed! Now you both know that you have a crush on each other.\n"
-                                   f"Have a good love!")
+
+        message_to_user1 = render_to_string('match_inform_message.html', {'user': user1, 'crush': user2})
+        message_to_user2 = render_to_string('match_inform_message.html', {'user': user2, 'crush': user1})
+        await app.bot.send_message(chat_id=user1.telegram_chat_id,
+                                   text=message_to_user1,
+                                   parse_mode=telegram.constants.ParseMode.HTML)
+        await app.bot.send_message(chat_id=user2.telegram_chat_id,
+                                   text=message_to_user2,
+                                   parse_mode=telegram.constants.ParseMode.HTML)
         return True
