@@ -1,4 +1,3 @@
-from asgiref.sync import sync_to_async
 from django.test import TestCase
 
 from main import testing_utils

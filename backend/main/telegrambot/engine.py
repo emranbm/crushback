@@ -30,6 +30,4 @@ class TelegramBotEngine:
     async def _on_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await utils.create_or_update_user(update)
         message = render_to_string('start_command_reply.html', {'update': update})
-        await context.bot.send_message(chat_id=update.effective_chat.id,
-                                       text=message,
-                                       parse_mode=telegram.constants.ParseMode.HTML)
+        await update.message.reply_html(message)

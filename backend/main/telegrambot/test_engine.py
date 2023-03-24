@@ -7,13 +7,13 @@ from main.telegrambot.engine import TelegramBotEngine
 
 # noinspection PyMethodMayBeStatic
 class StartCommandTest(TestCase):
-    async def test_should_reply(self):
+    async def test_should_reply_on_start(self):
         update = testing_utils.create_default_update()
         context = testing_utils.create_default_context()
         await TelegramBotEngine._on_start(update, context)
-        send_message_kwargs = context.bot.send_message.call_args.kwargs
-        self.assertTrue(f"Hi {testing_utils.TEST_USER_FIRST_NAME}" in send_message_kwargs['text'],
-                        f"Unexpected reply message: {send_message_kwargs['text']}")
+        send_message_args = update.message.reply_html.call_args.args
+        self.assertTrue(f"Hi {testing_utils.TEST_USER_FIRST_NAME}" in send_message_args[0],
+                        f"Unexpected reply message: {send_message_args[0]}")
 
     async def test_should_save_new_user(self):
         users_count = await models.User.objects.acount()
