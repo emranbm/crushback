@@ -3,6 +3,7 @@ import subprocess
 from asyncio import sleep
 from contextlib import asynccontextmanager
 from subprocess import Popen
+from unittest import skip
 from urllib.parse import urlparse
 
 import socks
@@ -21,6 +22,20 @@ class AddcrushTest(AsyncTestCase):
     @classmethod
     def setUpClass(cls):
         load_dotenv()
+        cls.clients = [
+            {
+                'username': os.environ['CRUSHBACK_TELEGRAM_CLIENT1_USERNAME'],
+                'api_id': int(os.environ['CRUSHBACK_TELEGRAM_CLIENT1_API_ID']),
+                'api_hash': os.environ['CRUSHBACK_TELEGRAM_CLIENT1_API_HASH'],
+                'session_str': os.environ['CRUSHBACK_TELEGRAM_CLIENT1_SESSION_STRING'],
+            },
+            {
+                'username': os.environ['CRUSHBACK_TELEGRAM_CLIENT2_USERNAME'],
+                'api_id': int(os.environ['CRUSHBACK_TELEGRAM_CLIENT2_API_ID']),
+                'api_hash': os.environ['CRUSHBACK_TELEGRAM_CLIENT2_API_HASH'],
+                'session_str': os.environ['CRUSHBACK_TELEGRAM_CLIENT2_SESSION_STRING'],
+            },
+        ]
         cls.api_id = int(os.environ['CRUSHBACK_TELEGRAM_CLIENT1_API_ID'])
         cls.api_hash = os.environ['CRUSHBACK_TELEGRAM_CLIENT1_API_HASH']
         cls.session_str = os.environ['CRUSHBACK_TELEGRAM_CLIENT1_SESSION_STRING']
@@ -52,9 +67,12 @@ class AddcrushTest(AsyncTestCase):
     # Could not use setUp standard methods!
     # When the telegram client is created there, the client hangs on sending messages, surprisingly!
     @asynccontextmanager
-    async def _create_telegram_client(self) -> TelegramClient:
+    async def _create_telegram_client(self, client_number: int = 1) -> TelegramClient:
         telegram_client = TelegramClient(
-            StringSession(self.session_str), self.api_id, self.api_hash, sequential_updates=True
+            StringSession(self.clients[client_number - 1]['session_str']),
+            self.clients[client_number - 1]['api_id'],
+            self.clients[client_number - 1]['api_hash'],
+            sequential_updates=True,
         )
         if self.proxy_url is not None:
             u = urlparse(self.proxy_url)
@@ -70,8 +88,8 @@ class AddcrushTest(AsyncTestCase):
         await telegram_client.disconnected
 
     @asynccontextmanager
-    async def _create_conversation(self) -> Conversation:
-        telegram_client_context_manager = self._create_telegram_client()
+    async def _create_conversation(self, client_number: int = 1) -> Conversation:
+        telegram_client_context_manager = self._create_telegram_client(client_number)
         telegram_client = await telegram_client_context_manager.__aenter__()
         conversation_context_manager = telegram_client.conversation(self.test_bot_username, timeout=10)
         conversation = await conversation_context_manager.__aenter__()
@@ -91,11 +109,17 @@ class AddcrushTest(AsyncTestCase):
                              msg.text)
             await conv.send_message('/cancel')
 
+    @skip("Not implemented yet")
     async def test_user_should_be_informed_if_his_crush_is_matched(self):
-        async with self._create_conversation() as conv:
+        async with self._create_conversation(1) as conv:
             await conv.send_message('/addcrush')
-            msg: Message = await conv.get_response()
-            self.assertEqual("OK! Please send me your crush's username.\n"
-                             "Or /cancel.(This is experimental and doesn't work yet!)",
-                             msg.text)
-            await conv.send_message('/cancel')
+            await conv.get_response()
+            await conv.send_message(f'@{self.clients[1]["username"]}')
+            await conv.get_response()
+        async with self._create_conversation(2) as conv:
+            await conv.send_message('/addcrush')
+            await conv.get_response()
+            await conv.send_message(f'@{self.clients[0]["username"]}')
+            await conv.get_response()  # Crush saved ack
+            msg: Message = await conv.get_response()  # Crush matched message
+            self.assertTrue("congratulations" in msg.text.lower())
