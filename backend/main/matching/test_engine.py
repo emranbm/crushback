@@ -32,7 +32,7 @@ class MatchingEngineTest(TestCase):
         await matching_engine.inform_newly_matched_users()
         self.assertEqual(2, mocked_telegram_app.bot.send_message.call_count)
         for call_args in mocked_telegram_app.bot.send_message.call_args_list:
-            self.assertNotEqual(irrelevant_user.telegram_chat_id, call_args.args[0])
+            self.assertNotEqual(irrelevant_user.telegram_chat_id, call_args.kwargs['chat_id'])
 
     @testing_utils.mock_telegram_bot_engine_async
     async def test_informs_no_one_when_no_matching_happened(self, mocked_telegram_app: Application):

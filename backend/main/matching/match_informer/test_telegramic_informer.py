@@ -18,5 +18,5 @@ class TelegramicInformerTest(TestCase):
         self.assertTrue(informed)
         mocked_send_message: AsyncMock = mocked_telegram_app.bot.send_message
         self.assertEqual(2, mocked_send_message.call_count)
-        self.assertEqual(user1.telegram_chat_id, mocked_send_message.call_args_list[0][0][0])
-        self.assertEqual(user2.telegram_chat_id, mocked_send_message.call_args_list[1][0][0])
+        self.assertEqual(user1.telegram_chat_id, mocked_send_message.call_args_list[0].kwargs['chat_id'])
+        self.assertEqual(user2.telegram_chat_id, mocked_send_message.call_args_list[1].kwargs['chat_id'])
