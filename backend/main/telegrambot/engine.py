@@ -24,7 +24,7 @@ class TelegramBotEngine:
         app = TelegramBotEngine.get_app()
         app.add_handler(CommandHandler('start', TelegramBotEngine._on_start))
         app.add_handler(AddcrushHandler())
-        app.run_polling()
+        app.run_polling(drop_pending_updates=True)
 
     @staticmethod
     async def _on_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
