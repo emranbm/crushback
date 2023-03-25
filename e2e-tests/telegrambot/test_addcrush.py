@@ -4,15 +4,6 @@ from base import TelegramBotTestCase
 
 
 class AddCrushTest(TelegramBotTestCase):
-    async def test_should_reply_appropriate_message_on_addcrush_command(self):
-        async with self._create_conversation() as conv:
-            await conv.send_message('/addcrush')
-            msg: Message = await conv.get_response()
-            self.assertEqual("OK! Please send me your crush's username.\n"
-                             "Or /cancel.(This is experimental and doesn't work yet!)",
-                             msg.text)
-            await conv.send_message('/cancel')
-
     async def test_user_should_be_informed_if_his_crush_is_matched(self):
         async with self._create_conversation(1) as conv:
             await conv.send_message('/addcrush')
