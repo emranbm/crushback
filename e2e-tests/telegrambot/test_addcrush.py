@@ -1,5 +1,3 @@
-from unittest import skip
-
 from telethon.tl.custom import Message
 
 from base import TelegramBotTestCase
