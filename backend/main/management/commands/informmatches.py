@@ -32,12 +32,15 @@ class Command(BaseCommand):
         non_informed_records = MatchedRecord.objects.filter(informed=False).aiterator()
         total_count = 0
         informed_count = 0
+        record: MatchedRecord
         async for record in non_informed_records:
             total_count += 1
             informed = await self.match_informer.inform_match(record)
             if not informed:
                 self.stdout.write(f"ERROR: Couldn't inform matched record!")
             else:
+                record.informed = True
+                record.save()
                 informed_count += 1
         self.stdout.write(f"({datetime.now()}) Done!")
         self.stdout.write(f"{informed_count} out of {total_count} new matches have been informed to the corresponding users.")
