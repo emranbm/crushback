@@ -29,6 +29,12 @@ spec:
           securityContext:
           {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          command:
+            - python
+            - manage.py
+            - checkmatches
+            - --period
+            - "{{ .Values.checkMatchesPeriodSeconds }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           resources:
             limits:
