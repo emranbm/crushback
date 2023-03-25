@@ -74,10 +74,6 @@ jobs:
         working-directory: ./backend/
   build-backend-image:
     runs-on: ubuntu-20.04
-    needs:
-      - unit-tests
-      - end-to-end-tests
-      - check-migrations
     steps:
       - uses: actions/checkout@v3
         with:
@@ -102,6 +98,9 @@ jobs:
     runs-on: ubuntu-20.04
     needs:
       - build-backend-image
+      - unit-tests
+      - end-to-end-tests
+      - check-migrations
     steps:
       - uses: actions/checkout@v3
       - name: Setup Kube config
@@ -122,6 +121,9 @@ jobs:
     runs-on: ubuntu-20.04
     needs:
       - build-backend-image
+      - unit-tests
+      - end-to-end-tests
+      - check-migrations
     steps:
       - uses: actions/checkout@v3
       - name: Setup Kube config
