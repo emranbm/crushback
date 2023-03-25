@@ -2,7 +2,6 @@ import os
 import subprocess
 from asyncio import sleep
 from contextlib import asynccontextmanager
-from time import sleep as sync_sleep
 from urllib.parse import urlparse
 
 import socks
@@ -12,14 +11,10 @@ from telethon import TelegramClient
 from telethon.sessions import StringSession
 from telethon.tl.custom import Conversation
 
+import testing_utils
+
 
 class TelegramBotTestCase(AsyncTestCase):
-    ROOT_DIR = "../.."
-    BACKEND_DIR = f"{ROOT_DIR}/backend/"
-    CHECK_MATCH_PERIOD_SECONDS = 1
-
-    bot_process: subprocess.Popen = None
-    check_matches_process: subprocess.Popen = None
 
     @classmethod
     def setUpClass(cls):
@@ -38,30 +33,9 @@ class TelegramBotTestCase(AsyncTestCase):
                 'session_str': os.environ['CRUSHBACK_TELEGRAM_CLIENT2_SESSION_STRING'],
             },
         ]
-        cls.api_id = int(os.environ['CRUSHBACK_TELEGRAM_CLIENT1_API_ID'])
-        cls.api_hash = os.environ['CRUSHBACK_TELEGRAM_CLIENT1_API_HASH']
-        cls.session_str = os.environ['CRUSHBACK_TELEGRAM_CLIENT1_SESSION_STRING']
         cls.proxy_url = os.environ.get('CRUSHBACK_TELEGRAM_PROXY_URL', None)
         cls.test_bot_username = os.environ['CRUSHBACK_TELEGRAM_BOT_USERNAME']
-        cls.backend_venv_path = cls._get_backend_venv_path()
-        cls._start_database()
-        cls._run_backend_manage_command("migrate").communicate()
-        cls.bot_process = cls._run_backend_manage_command("telegrambot")
-        cls.check_matches_process = cls._run_backend_manage_command("checkmatches", "--period", str(cls.CHECK_MATCH_PERIOD_SECONDS))
-
-    @classmethod
-    def _get_backend_venv_path(cls):
-        stdout: bytes = subprocess.check_output(["bash", "-c", "pipenv --venv"],
-                                                cwd=cls.BACKEND_DIR,
-                                                env={})
-        backend_venv_path = stdout.decode("utf-8").strip()
-        return backend_venv_path
-
-    @classmethod
-    def _start_database(cls):
-        subprocess.Popen(["docker-compose", "up", "-d", "database"],
-                         cwd=cls.ROOT_DIR).communicate()
-        sync_sleep(2)  # Wait for DB to get ready
+        cls.backend_venv_path = testing_utils.get_backend_venv_path()
 
     @classmethod
     def _stop_database(cls):
@@ -77,6 +51,7 @@ class TelegramBotTestCase(AsyncTestCase):
                                          "User.objects.all().delete();"
                                          ], stdout=subprocess.PIPE)
         cls._run_backend_manage_command("shell", stdin=clear_script.stdout).communicate()
+        clear_script.communicate()
 
     @classmethod
     def _run_backend_manage_command(cls, *cmd: str, stdin=None) -> subprocess.Popen:
@@ -87,15 +62,9 @@ class TelegramBotTestCase(AsyncTestCase):
                                     f"{cls.backend_venv_path}/bin/python3.8",
                                     "./manage.py",
                                 ) + cmd,
-                                cwd=cls.BACKEND_DIR,
+                                cwd=testing_utils.BACKEND_DIR,
                                 stdin=stdin,
                                 env=env)
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.bot_process.kill()
-        cls.check_matches_process.kill()
-        cls._stop_database()
 
     def setUp(self) -> None:
         self._clear_database()

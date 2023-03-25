@@ -1,5 +1,6 @@
 from telethon.tl.custom import Message
 
+import testing_utils
 from base import TelegramBotTestCase
 
 
@@ -15,5 +16,5 @@ class AddCrushTest(TelegramBotTestCase):
             await conv.get_response()
             await conv.send_message(f'@{self.clients[0]["username"]}')
             await conv.get_response()  # Crush saved ack
-            msg: Message = await conv.get_response(timeout=self.CHECK_MATCH_PERIOD_SECONDS + 1)  # Crush matched message
+            msg: Message = await conv.get_response(timeout=testing_utils.CHECK_MATCH_PERIOD_SECONDS + 2)  # Crush matched message
             self.assertTrue("congratulations" in msg.text.lower())

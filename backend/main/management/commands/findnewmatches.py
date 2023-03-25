@@ -11,8 +11,8 @@ from main.matching.match_informer.telegramic_informer import TelegramicInformer
 
 
 class Command(BaseCommand):
-    help = 'Check if any new matches has occurred and send corresponding messages to the users.'
-    matching_engine: MatchingEngine
+    help = 'Check if any new matches has occurred and saves them in database.'
+    match_finder: TelegramMatchFinder
 
     def add_arguments(self, parser: ArgumentParser):
         parser.add_argument('--period', action='store',
@@ -23,13 +23,13 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         period_seconds = options['period']
         self.stdout.write(f"Starting to check matches every {period_seconds} seconds ...")
-        self.matching_engine = MatchingEngine(TelegramMatchFinder(), TelegramicInformer())
+        self.match_finder = TelegramMatchFinder()
         while True:
-            asyncio.run(self.check_match())
+            asyncio.run(self.find_new_matches())
             sleep(period_seconds)
 
-    async def check_match(self):
-        self.stdout.write(f"({datetime.now()}) Finding and informing matches...")
-        informed_matches = await self.matching_engine.inform_newly_matched_users()
+    async def find_new_matches(self):
+        self.stdout.write(f"({datetime.now()}) Finding new matches...")
+        new_records = await self.match_finder.save_new_matched_records()
         self.stdout.write(f"({datetime.now()}) Done!")
-        self.stdout.write(f"{len(informed_matches)} new matches have been detected and informed.")
+        self.stdout.write(f"{len(new_records)} new matches have been detected and saved.")
