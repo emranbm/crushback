@@ -2,6 +2,7 @@ import asyncio
 from argparse import ArgumentParser
 from datetime import datetime
 
+from asgiref.sync import sync_to_async
 from django.core.management import BaseCommand
 from time import sleep
 
@@ -40,7 +41,7 @@ class Command(BaseCommand):
                 self.stdout.write(f"ERROR: Couldn't inform matched record!")
             else:
                 record.informed = True
-                record.save()
+                await sync_to_async(record.save)()
                 informed_count += 1
         self.stdout.write(f"({datetime.now()}) Done!")
         self.stdout.write(f"{informed_count} out of {total_count} new matches have been informed to the corresponding users.")
