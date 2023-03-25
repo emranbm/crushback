@@ -31,6 +31,7 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           command:
             - python
+            - -u
             - manage.py
             - findnewmatches
             - --period
