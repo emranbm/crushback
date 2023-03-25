@@ -1,5 +1,6 @@
 import unittest
 from random import randint
+from typing import Optional
 from unittest.mock import Mock, AsyncMock, patch
 
 from asgiref.sync import sync_to_async, async_to_sync
@@ -44,13 +45,20 @@ async def create_user_and_their_crush_async(self_telegram_username: str, crush_t
     return await sync_to_async(create_user_and_their_crush)(self_telegram_username, crush_telegram_username)
 
 
-def create_default_update() -> Update:
+def create_default_update(user: Optional[User] = None) -> Update:
     update: Update = Mock()
-    update.effective_user.id = TEST_USER_ID
-    update.effective_user.username = TEST_USER_USERNAME
-    update.effective_user.first_name = TEST_USER_FIRST_NAME
-    update.effective_user.last_name = TEST_USER_LAST_NAME
-    update.effective_chat.id = TEST_CHAT_ID
+    if user is None:
+        update.effective_user.id = TEST_USER_ID
+        update.effective_user.username = TEST_USER_USERNAME
+        update.effective_user.first_name = TEST_USER_FIRST_NAME
+        update.effective_user.last_name = TEST_USER_LAST_NAME
+        update.effective_chat.id = TEST_CHAT_ID
+    else:
+        update.effective_user.id = user.telegram_user_id
+        update.effective_user.username = user.telegram_username
+        update.effective_user.first_name = user.first_name
+        update.effective_user.last_name = user.last_name
+        update.effective_chat.id = user.telegram_chat_id
     update.message.reply_text = AsyncMock()
     update.message.reply_html = AsyncMock()
     return update

@@ -1,6 +1,7 @@
 from django.conf import settings
 from telegram.ext import ApplicationBuilder, Application
 
+from main.telegrambot.command_handlers.list_crushes_command_handler import ListCrushesHandler
 from main.telegrambot.command_handlers.start_command_handler import StartCommandHandler
 from main.telegrambot.conversation_handlers.addcrush_handler import AddcrushHandler
 
@@ -21,4 +22,5 @@ class TelegramBotEngine:
         app = TelegramBotEngine.create_app()
         app.add_handler(StartCommandHandler())
         app.add_handler(AddcrushHandler())
+        app.add_handler(ListCrushesHandler())
         app.run_polling(drop_pending_updates=True)

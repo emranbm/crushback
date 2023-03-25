@@ -69,7 +69,17 @@ class TelegramBotTestCase(AsyncTestCase):
                          cwd=cls.ROOT_DIR).communicate()
 
     @classmethod
-    def _run_backend_manage_command(cls, *cmd: str) -> subprocess.Popen:
+    def _clear_database(cls):
+        clear_script = subprocess.Popen(["echo",
+                                         "from main.models import Crush, User, MatchedRecord;"
+                                         "MatchedRecord.objects.all().delete();"
+                                         "Crush.objects.all().delete();"
+                                         "User.objects.all().delete();"
+                                         ], stdout=subprocess.PIPE)
+        cls._run_backend_manage_command("shell", stdin=clear_script.stdout).communicate()
+
+    @classmethod
+    def _run_backend_manage_command(cls, *cmd: str, stdin=None) -> subprocess.Popen:
         env = {'CRUSHBACK_TELEGRAM_BOT_TOKEN': os.environ['CRUSHBACK_TELEGRAM_BOT_TOKEN']}
         if cls.proxy_url is not None:
             env['CRUSHBACK_TELEGRAM_PROXY_URL'] = cls.proxy_url
@@ -78,6 +88,7 @@ class TelegramBotTestCase(AsyncTestCase):
                                     "./manage.py",
                                 ) + cmd,
                                 cwd=cls.BACKEND_DIR,
+                                stdin=stdin,
                                 env=env)
 
     @classmethod
@@ -85,6 +96,9 @@ class TelegramBotTestCase(AsyncTestCase):
         cls.bot_process.kill()
         cls.check_matches_process.kill()
         cls._stop_database()
+
+    def setUp(self) -> None:
+        self._clear_database()
 
     # Could not use setUp standard methods!
     # When the telegram client is created there, the client hangs on sending messages, surprisingly!

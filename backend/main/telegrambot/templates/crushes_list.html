@@ -1,0 +1,4 @@
+{% for crush in crushes %}@{{ crush.telegram_username }}
+{% empty %}
+    You've no crushes already. Send /addcrush add one!
+{% endfor %}
