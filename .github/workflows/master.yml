@@ -41,12 +41,9 @@ jobs:
         working-directory: ./e2e-tests/telegrambot/
       - name: Make Pipenv also accessible inside tests
         run: sudo cp `which pipenv` /usr/bin/pipenv
-      - name: Remove .env due to a bug in dotenv package :/
+      - name: Replace .env
         working-directory: ./e2e-tests/telegrambot/
-        run: rm .env
-      - name: Run end-to-end tests
-        working-directory: ./e2e-tests/telegrambot/
-        run: >
+        run: echo "
           CRUSHBACK_TELEGRAM_BOT_TOKEN=${{ secrets.CRUSHBACK_TEST_TELEGRAM_TEST_BOT_TOKEN }}
           CRUSHBACK_TELEGRAM_BOT_USERNAME=${{ vars.CRUSHBACK_TEST_TELEGRAM_BOT_USERNAME }}
           CRUSHBACK_TELEGRAM_CLIENT1_USERNAME=${{ vars.CRUSHBACK_TELEGRAM_CLIENT1_USERNAME }}
@@ -57,7 +54,10 @@ jobs:
           CRUSHBACK_TELEGRAM_CLIENT2_API_ID=${{ secrets.CRUSHBACK_TELEGRAM_CLIENT2_API_ID }}
           CRUSHBACK_TELEGRAM_CLIENT2_API_HASH=${{ secrets.CRUSHBACK_TELEGRAM_CLIENT2_API_HASH }}
           CRUSHBACK_TELEGRAM_CLIENT2_SESSION_STRING=${{ secrets.CRUSHBACK_TELEGRAM_CLIENT2_SESSION_STRING }}
-          pipenv run python -m unittest
+          " > .env
+      - name: Run end-to-end tests
+        working-directory: ./e2e-tests/telegrambot/
+        run: python ./main.py
   check-migrations:
     runs-on: ubuntu-20.04
     steps:
