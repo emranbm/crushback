@@ -43,7 +43,8 @@ jobs:
         run: sudo cp `which pipenv` /usr/bin/pipenv
       - name: Replace .env
         working-directory: ./e2e-tests/telegrambot/
-        run: echo "
+        run: |
+          echo "
           CRUSHBACK_TELEGRAM_BOT_TOKEN=${{ secrets.CRUSHBACK_TEST_TELEGRAM_TEST_BOT_TOKEN }}
           CRUSHBACK_TELEGRAM_BOT_USERNAME=${{ vars.CRUSHBACK_TEST_TELEGRAM_BOT_USERNAME }}
           CRUSHBACK_TELEGRAM_CLIENT1_USERNAME=${{ vars.CRUSHBACK_TELEGRAM_CLIENT1_USERNAME }}
