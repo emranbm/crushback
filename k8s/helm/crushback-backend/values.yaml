@@ -6,7 +6,6 @@ secretKey: dummy
 recaptchaServerKey: dummy
 djangoSettingsModule: backend.settings-production
 matchFinderPeriodSeconds: 300
-matchInformerPeriodSeconds: 300
 
 replicaCount: 1
 image:

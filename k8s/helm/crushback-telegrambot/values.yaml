@@ -6,6 +6,7 @@
 secretKey: dummy
 telegramBotToken: dummy
 proxyUrl: "socks5://socks-proxy:8123"
+matchInformerPeriodSeconds: 300
 
 replicaCount: 1
 

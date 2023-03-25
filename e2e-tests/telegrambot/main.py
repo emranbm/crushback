@@ -16,9 +16,9 @@ def main():
     # noinspection PyBroadException
     try:
         run_tests()
-        NameError
     except BaseException:
         teardown_test_environment()
+        exit(1)
     else:
         teardown_test_environment()
 
@@ -39,7 +39,10 @@ def setup_test_environment():
 
 
 def run_tests():
-    subprocess.Popen(['pipenv', 'run', 'python', '-m', 'unittest']).communicate()
+    process = subprocess.Popen(['pipenv', 'run', 'python', '-m', 'unittest'])
+    process.communicate()
+    if process.returncode != 0:
+        raise Exception("Tests failed.")
 
 
 def teardown_test_environment():
