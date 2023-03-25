@@ -30,8 +30,7 @@ class AddcrushHandler(ConversationHandler):
     @staticmethod
     async def _on_addcruch(update: Update, context: ContextTypes.DEFAULT_TYPE) -> _State:
         await update.message.reply_text("OK! Please send me your crush's username.\n"
-                                        "Or /cancel."
-                                        "(This is experimental and doesn't work yet!)")
+                                        "Or /cancel.")
         return _State.RECEIVE_USERNAME
 
     @staticmethod
