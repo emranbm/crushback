@@ -2,6 +2,7 @@ from django.conf import settings
 from telegram.ext import ApplicationBuilder, Application
 
 from main.telegrambot.command_handlers.list_crushes_handler import ListCrushesHandler
+from main.telegrambot.command_handlers.privacy_command_handler import PrivacyCommandHandler
 from main.telegrambot.command_handlers.start_command_handler import StartCommandHandler
 from main.telegrambot.conversation_handlers.addcrush_handler import AddcrushHandler
 from main.telegrambot.conversation_handlers.delcrush_handler import DelcrushHandler
@@ -22,6 +23,7 @@ class TelegramBotEngine:
     def run() -> None:
         app = TelegramBotEngine.create_app()
         app.add_handler(StartCommandHandler())
+        app.add_handler(PrivacyCommandHandler())
         app.add_handler(AddcrushHandler())
         app.add_handler(DelcrushHandler())
         app.add_handler(ListCrushesHandler())
