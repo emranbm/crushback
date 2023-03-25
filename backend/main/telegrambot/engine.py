@@ -1,16 +1,13 @@
-import telegram.constants
 from django.conf import settings
-from django.template.loader import render_to_string
-from telegram import Update
-from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler, Application
+from telegram.ext import ApplicationBuilder, Application
 
-from main.telegrambot import utils
+from main.telegrambot.command_handlers.start_command_handler import StartCommandHandler
 from main.telegrambot.conversation_handlers.addcrush_handler import AddcrushHandler
 
 
 class TelegramBotEngine:
     @staticmethod
-    def get_app() -> Application:
+    def create_app() -> Application:
         app_builder = ApplicationBuilder().token(settings.TELEGRAM_BOT_TOKEN)
         proxy_url = settings.TELEGRAM_PROXY_URL
         if proxy_url is not None:
@@ -21,13 +18,7 @@ class TelegramBotEngine:
 
     @staticmethod
     def run() -> None:
-        app = TelegramBotEngine.get_app()
-        app.add_handler(CommandHandler('start', TelegramBotEngine._on_start))
+        app = TelegramBotEngine.create_app()
+        app.add_handler(StartCommandHandler())
         app.add_handler(AddcrushHandler())
         app.run_polling(drop_pending_updates=True)
-
-    @staticmethod
-    async def _on_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-        await utils.create_or_update_user(update)
-        message = render_to_string('start_command_reply.html', {'update': update})
-        await update.message.reply_html(message)

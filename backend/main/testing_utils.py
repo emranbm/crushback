@@ -63,20 +63,20 @@ def create_default_context() -> ContextTypes.DEFAULT_TYPE:
 
 
 def mock_telegram_bot_engine_async(func):
-    async def f(self, get_app_mock):
+    async def f(self, create_app_mock):
         app: Application = Mock()
         app.bot.send_message = AsyncMock()
-        get_app_mock.return_value = app
+        create_app_mock.return_value = app
         await func(self, app)
 
-    return patch.object(TelegramBotEngine, 'get_app')(f)
+    return patch.object(TelegramBotEngine, 'create_app')(f)
 
 
 def mock_telegram_bot_engine(func):
-    def f(self, get_app_mock):
+    def f(self, create_app_mock):
         app: Application = Mock()
         app.bot.send_message = Mock()
-        get_app_mock.return_value = app
+        create_app_mock.return_value = app
         func(self, app)
 
-    return patch.object(TelegramBotEngine, 'get_app')(f)
+    return patch.object(TelegramBotEngine, 'create_app')(f)

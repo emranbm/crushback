@@ -9,7 +9,7 @@ from main.utils.async_utils import get_model_prop
 
 class TelegramicInformer(MatchInformer):
     async def inform_match(self, matched_record: MatchedRecord) -> bool:
-        app = TelegramBotEngine.get_app()
+        app = TelegramBotEngine.create_app()
         user1 = await get_model_prop(matched_record, 'left_user')
         user2 = await get_model_prop(matched_record, 'right_user')
 
