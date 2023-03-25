@@ -1,6 +1,6 @@
 from main import testing_utils
 from main.telegrambot.command_handlers.base import CommandHandlerBase
-from main.telegrambot.command_handlers.list_crushes_command_handler import ListCrushesHandler
+from main.telegrambot.command_handlers.list_crushes_handler import ListCrushesHandler
 from main.telegrambot.command_handlers.test_base_test_case import CommandHandlerBaseTestCase
 
 
