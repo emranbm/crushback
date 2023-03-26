@@ -53,7 +53,7 @@ class DelcrushHandler(ConversationHandler):
             message = render_to_string('unexpected_error.html')
             await update.message.reply_html(message)
         else:
-            message = render_to_string('crush_saved_ack.html', {'crush_username': crush_username})
+            message = render_to_string('crush_deleted_ack.html', {'crush_username': crush_username})
             await update.message.reply_html(message)
         return ConversationHandler.END
 
