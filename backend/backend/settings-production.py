@@ -1,6 +1,6 @@
 from backend.settings import *
 
-DEBUG = True
+DEBUG = False
 ALLOWED_HOSTS = ['*']
 DRF_RECAPTCHA_TESTING = False
 
