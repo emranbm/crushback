@@ -113,6 +113,7 @@ jobs:
       - name: Deploy Backend
         run: >
           helm upgrade -i crushback-backend
+          --atomic
           --set image.tag="master-${GITHUB_SHA}"
           --set secretKey="${{ secrets.CRUSHBACK_SECRET_KEY }}"
           --set recaptchaServerKey="${{ secrets.RECAPTCHA_SERVER_KEY }}"
@@ -136,6 +137,7 @@ jobs:
       - name: Deploy Telegram Bot
         run: >
           helm upgrade -i crushback-telegrambot
+          --atomic
           --set image.tag="master-${GITHUB_SHA}"
           --set telegramBotToken="${{ secrets.TELEGRAM_BOT_TOKEN }}"
           --set secretKey="${{ secrets.CRUSHBACK_SECRET_KEY }}"
@@ -155,6 +157,7 @@ jobs:
       - name: Deploy Frontend
         run: >
           helm upgrade -i crushback-frontend
+          --atomic
           --set image.tag="master-${GITHUB_SHA}"
           k8s/helm/crushback-frontend/
   deploy-socks-proxy:
@@ -170,6 +173,7 @@ jobs:
       - name: Deploy Socks Proxy
         run: >
           helm upgrade -i socks-proxy
+          --atomic
           --set host="${{ vars.SOCKS_HOST }}"
           --set username="${{ vars.SOCKS_USER }}"
           --set password="${{ secrets.SOCKS_PASS }}"
@@ -185,7 +189,7 @@ jobs:
           KUBE_API_TOKEN="${{ secrets.KUBE_API_TOKEN }}"
           ./.github/scripts/setup-kubectl.sh
       - name: Deploy Prometheus
-        run: helm upgrade -i prometheus k8s/helm/prometheus/
+        run: helm upgrade -i prometheus --atomic k8s/helm/prometheus/
   deploy-cluster-metrics:
     runs-on: ubuntu-20.04
     steps:
@@ -197,4 +201,4 @@ jobs:
           KUBE_API_TOKEN="${{ secrets.KUBE_API_TOKEN }}"
           ./.github/scripts/setup-kubectl.sh
       - name: Deploy Prometheus
-        run: helm upgrade -i cluster-metrics k8s/helm/cluster-metrics/
+        run: helm upgrade -i cluster-metrics --atomic k8s/helm/cluster-metrics/
