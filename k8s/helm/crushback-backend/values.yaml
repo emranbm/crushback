@@ -14,7 +14,7 @@ image:
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
 resources:
-  cpu: 150m
+  cpu: 400m
   memory: 128Mi
   ephemeral-storage: 200Mi
 
