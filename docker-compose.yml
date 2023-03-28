@@ -3,7 +3,10 @@ services:
   backend:
     image: ${DOCKER_IMAGES_PREFIX}-backend:${CRUSHBACK_VERSION}
     restart: unless-stopped
-    build: backend/
+    build:
+      context: backend/
+      args:
+        - HTTPS_PROXY
     environment:
       - DJANGO_SETTINGS_MODULE
       - CRUSHBACK_SECRET_KEY

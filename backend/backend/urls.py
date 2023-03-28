@@ -27,4 +27,5 @@ router.register(r'users', views.UserViewSet)
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
+    path('', include('django_prometheus.urls')),
 ]

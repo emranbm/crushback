@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "22ac94ca1b10ddb44f9bd07961b8af583ab96d0faf8f16f3333162fcec475025"
+            "sha256": "f92ab95f93fb0a88e55e37ae24f3e5d72a65a55e5cd68b3ca10738a0b6d24043"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -74,6 +74,14 @@
             ],
             "version": "==4.0.2"
         },
+        "django-prometheus": {
+            "hashes": [
+                "sha256:240378a1307c408bd5fc85614a3a57f1ce633d4a222c9e291e2bbf325173b801",
+                "sha256:e6616770d8820b8834762764bf1b76ec08e1b98e72a6f359d488a2e15fe3537c"
+            ],
+            "index": "pypi",
+            "version": "==2.2.0"
+        },
         "djangorestframework": {
             "hashes": [
                 "sha256:579a333e6256b09489cbe0a067e66abe55c6595d8926be6b99423786334350c8",
@@ -138,6 +146,13 @@
                 "sha256:90b77e79eaa3eba6de819a0c442c0b4ceefc341a7a2ab77d7562bf49f425c5c2"
             ],
             "version": "==3.4"
+        },
+        "prometheus-client": {
+            "hashes": [
+                "sha256:0836af6eb2c8f4fed712b2f279f6c0a8bbab29f9f4aa15276b91c7cb0d1616ab",
+                "sha256:a03e35b359f14dd1630898543e2120addfdeacd1a6069c1367ae90fd93ad3f48"
+            ],
+            "version": "==0.16.0"
         },
         "psycopg2-binary": {
             "hashes": [

@@ -41,9 +41,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
+    'django_prometheus',
 ] + CURRENT_APPS
 
 MIDDLEWARE = [
+    'django_prometheus.middleware.PrometheusBeforeMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -51,6 +53,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_prometheus.middleware.PrometheusAfterMiddleware',
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -92,7 +95,7 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': 'django_prometheus.db.backends.postgresql',
         'NAME': os.environ.get('CRUSHBACK_DB_NAME', 'crushback_db'),
         'USER': os.environ.get('CRUSHBACK_DB_USER', 'crushback'),
         'PASSWORD': os.environ.get('CRUSHBACK_DB_PASSWORD', 'dummy'),

@@ -4,6 +4,7 @@ import string
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 from django.db import models
+from django_prometheus.models import ExportModelOperationsMixin
 
 
 class _AutoCleanedModel(models.Model):
@@ -34,7 +35,7 @@ class Contactable(_AutoCleanedModel):
         abstract = True
 
 
-class User(AbstractUser, Contactable):
+class User(AbstractUser, Contactable, ExportModelOperationsMixin("User")):
     first_name = models.CharField(null=False, blank=True, default='', max_length=64)
     last_name = models.CharField(null=False, blank=True, default='', max_length=64)
     telegram_user_id = models.BigIntegerField(null=True, blank=True, unique=True)
@@ -45,7 +46,7 @@ class User(AbstractUser, Contactable):
         return ''.join(random.choice(string.ascii_letters) for i in range(64))
 
 
-class Crush(Contactable):
+class Crush(Contactable, ExportModelOperationsMixin("Crush")):
     name = models.CharField(null=False, blank=True, default='', max_length=64)
     crusher = models.ForeignKey(User, on_delete=models.CASCADE, related_name="crushes")
 
@@ -64,7 +65,7 @@ class Crush(Contactable):
             raise ValidationError("Crush should have at least one contact point.")
 
 
-class MatchedRecord(_AutoCleanedModel):
+class MatchedRecord(_AutoCleanedModel, ExportModelOperationsMixin("MatchedRecord")):
     # Convention: The user with lower id is left, and the one with greater id is right.
     left_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='+', null=False)
     right_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='+', null=False)
