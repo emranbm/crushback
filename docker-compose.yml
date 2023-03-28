@@ -28,6 +28,44 @@ services:
       - "8000:80"
     depends_on:
       - database
+  telegrambot:
+    image: ${DOCKER_IMAGES_PREFIX}-telegrambot:${CRUSHBACK_VERSION}
+    command: bash -c "./manage.py telegrambot"
+    restart: unless-stopped
+    build:
+      context: backend/
+      args:
+        - HTTPS_PROXY
+    environment:
+      - CRUSHBACK_SECRET_KEY
+      - CRUSHBACK_DB_USER
+      - CRUSHBACK_DB_PASSWORD
+      - CRUSHBACK_DB_NAME
+      - CRUSHBACK_DB_HOST
+      - CRUSHBACK_DB_PORT
+      - CRUSHBACK_TELEGRAM_BOT_TOKEN
+      - CRUSHBACK_TELEGRAM_PROXY_URL
+    ports:
+      - "9090:9090"
+    depends_on:
+      - database
+      - socks-proxy
+  socks-proxy:
+    image: ictu/sshpass:latest
+    command: >
+      sshpass -p "$SOCKS_PASS"
+      ssh
+      -oServerAliveInterval=100
+      -oStrictHostKeyChecking=no
+      -D ":9000"
+      -N
+      "$SOCKS_USER@$SOCKS_HOST"
+    environment:
+      - SOCKS_HOST
+      - SOCKS_USER
+      - SOCKS_PASS
+    ports:
+    - "9000"
   database:
     image: postgres:14.6-alpine3.17
     restart: unless-stopped
