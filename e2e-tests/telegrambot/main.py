@@ -63,17 +63,6 @@ def _stop_database():
                      cwd=testing_utils.ROOT_DIR).communicate()
 
 
-def _clear_database():
-    clear_script = subprocess.Popen(["echo",
-                                     "from main.models import Crush, User, MatchedRecord;"
-                                     "MatchedRecord.objects.all().delete();"
-                                     "Crush.objects.all().delete();"
-                                     "User.objects.all().delete();"
-                                     ], stdout=subprocess.PIPE)
-    _run_backend_manage_command("shell", stdin=clear_script.stdout).communicate()
-    clear_script.communicate()
-
-
 def _run_backend_manage_command(*cmd: str, stdin=None) -> subprocess.Popen:
     env = {'CRUSHBACK_TELEGRAM_BOT_TOKEN': _read_dot_env('CRUSHBACK_TELEGRAM_BOT_TOKEN')}
     if proxy_url is not None:
