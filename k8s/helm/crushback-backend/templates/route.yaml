@@ -14,3 +14,21 @@ spec:
     name: crushback-backend
     weight: 100
   wildcardPolicy: None
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ include "crushback-backend.fullname" . }}-exclude-metrics
+spec:
+  host: api.crushback.net
+  path: /metrics
+  port:
+    targetPort: http
+  tls:
+    insecureEdgeTerminationPolicy: Redirect
+    termination: edge
+  to:
+    kind: Service
+    name: non-existing-blackhole
+    weight: 100
+  wildcardPolicy: None
