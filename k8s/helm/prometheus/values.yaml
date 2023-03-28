@@ -11,11 +11,15 @@ prometheusConfigs:
 
     scrape_configs:
       # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
-      - job_name: 'prometheus'
+      - job_name: 'metrics-path-reader'
         static_configs:
           - targets:
             - cluster-metrics
             - crushback-backend
+      - job_name: 'root-path-reader'
+        metrics_path: /
+        static_configs:
+          - targets:
             - crushback-telegrambot:9090
   web.yml: |
     basic_auth_users:
