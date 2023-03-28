@@ -1,3 +1,4 @@
+from datetime import datetime
 from enum import Enum
 
 import telegram
@@ -6,8 +7,10 @@ from django.template.loader import render_to_string
 from telegram import Update
 from telegram.ext import ConversationHandler, CommandHandler, ContextTypes, MessageHandler, filters
 
+from main import metrics
 from main.models import Crush
 from main.telegrambot import utils
+from main.telegrambot.command_handlers.command_handler_with_metrics import CommandHandlerWithMetrics
 
 
 class _State(Enum):
@@ -25,7 +28,7 @@ class AddcrushHandler(ConversationHandler):
                     MessageHandler(filters.ALL & (~filters.COMMAND), self._on_wrong_username_format),
                 ]
             },
-            fallbacks=[CommandHandler("cancel", self._on_cancel)], )
+            fallbacks=[CommandHandlerWithMetrics("cancel", self._on_cancel)], )
 
     @staticmethod
     async def _on_addcruch(update: Update, context: ContextTypes.DEFAULT_TYPE) -> _State:
@@ -41,6 +44,7 @@ class AddcrushHandler(ConversationHandler):
 
     @staticmethod
     async def _on_crush_username_entered(update: Update, context: ContextTypes.DEFAULT_TYPE) -> _State:
+        start_time = datetime.now()
         user = await utils.create_or_update_user(update)
         crush_username = update.message.text
         try:
@@ -54,6 +58,8 @@ class AddcrushHandler(ConversationHandler):
         else:
             message = render_to_string('crush_saved_ack.html', {'crush_username': crush_username})
             await update.message.reply_html(message)
+        elapsed_time = datetime.now() - start_time
+        metrics.SERVER_LATENCY.labels(agent="telegrambot", action="addcrush").observe(elapsed_time.seconds)
         return ConversationHandler.END
 
     @staticmethod

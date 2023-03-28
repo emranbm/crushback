@@ -1,14 +1,14 @@
 from django.test import TestCase
 
 from main import testing_utils, models
-from main.telegrambot.command_handlers.base import CommandHandlerBase
+from main.telegrambot.command_handlers.command_handler_with_metrics import CommandHandlerWithMetrics
 from main.telegrambot.command_handlers.start_command_handler import StartCommandHandler
 from main.telegrambot.command_handlers.test_base_test_case import CommandHandlerBaseTestCase
 
 
 class StartCommandHandlerTest(CommandHandlerBaseTestCase):
     # Override
-    def get_handler(self) -> CommandHandlerBase:
+    def get_handler(self) -> CommandHandlerWithMetrics:
         return StartCommandHandler()
 
     async def test_should_reply_on_start(self):

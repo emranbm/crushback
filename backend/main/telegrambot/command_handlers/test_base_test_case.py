@@ -6,12 +6,12 @@ from telegram import Update
 from telegram.ext import ContextTypes
 
 from main import testing_utils
-from main.telegrambot.command_handlers.base import CommandHandlerBase
+from main.telegrambot.command_handlers.command_handler_with_metrics import CommandHandlerWithMetrics
 
 
 class CommandHandlerBaseTestCase(TestCase, ABC):
     @abstractmethod
-    def get_handler(self) -> CommandHandlerBase:
+    def get_handler(self) -> CommandHandlerWithMetrics:
         pass
 
     async def trigger_handler(self, update: Optional[Update] = None, context: Optional[ContextTypes.DEFAULT_TYPE] = None) -> str:

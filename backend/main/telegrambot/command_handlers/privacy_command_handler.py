@@ -3,10 +3,10 @@ from telegram import Update
 from telegram.ext import ContextTypes
 
 from main.telegrambot import utils
-from main.telegrambot.command_handlers.base import CommandHandlerBase
+from main.telegrambot.command_handlers.command_handler_with_metrics import CommandHandlerWithMetrics
 
 
-class PrivacyCommandHandler(CommandHandlerBase):
+class PrivacyCommandHandler(CommandHandlerWithMetrics):
     def __init__(self):
         super().__init__('privacy')
 
