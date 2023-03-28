@@ -71,6 +71,11 @@ jobs:
         run: curl https://raw.githubusercontent.com/pypa/pipenv/master/get-pipenv.py | python
       - run: pipenv install
         working-directory: ./backend/
+      - name: Start database
+        run: docker-compose up -d database
+      - name: Wait for DB to get ready
+        # TODO: Instead of blind sleep, check DB health.
+        run: sleep 2
       - run: pipenv run python ./manage.py makemigrations --dry-run --check
         working-directory: ./backend/
   build-backend-image:
