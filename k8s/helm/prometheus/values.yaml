@@ -16,6 +16,7 @@ prometheusConfigs:
           - targets:
             - cluster-metrics
             - crushback-backend
+            - crushback-telegrambot:9090
   web.yml: |
     basic_auth_users:
       admin: $2b$12$rZIScw7Zrh8D9BPFjbbVsOnCfpbE.JS5GD8mcJqFUGqRm8l.bnhUy

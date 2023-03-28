@@ -7,6 +7,7 @@ secretKey: dummy
 telegramBotToken: dummy
 proxyUrl: "socks5://socks-proxy:8123"
 matchInformerPeriodSeconds: 300
+metricsPort: 9090
 
 replicaCount: 1
 
@@ -48,6 +49,10 @@ resources:
   cpu: 150m
   memory: 128Mi
   ephemeral-storage: 100Mi
+
+service:
+  type: ClusterIP
+  port: 9090
 
 autoscaling:
   enabled: false

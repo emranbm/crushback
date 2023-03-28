@@ -58,6 +58,12 @@ spec:
               value: {{ .Values.telegramBotToken }}
             - name: CRUSHBACK_TELEGRAM_PROXY_URL
               value: {{ .Values.proxyUrl }}
+            - name: CRUSHBACK_TELEGRAMBOT_METRICS_PORT
+              value: {{ .Values.metricsPort }}
+          ports:
+            - name: metrics
+              containerPort: {{ .Values.metricsPort }}
+              protocol: TCP
         - name: {{ .Chart.Name }}-match-informer
           securityContext:
           {{- toYaml .Values.securityContext | nindent 12 }}
