@@ -17,12 +17,13 @@ class CommandHandlerWithMetrics(CommandHandler):
 
     async def _handle_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         start_time = datetime.now()
-        await self.handle_command(update, context)
+        return_value = await self.handle_command(update, context)
         delta = datetime.now() - start_time
         metrics.SERVER_LATENCY.labels(agent="telegrambot", action=self.command).observe(delta.seconds)
+        return return_value
 
     async def handle_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         if self._passed_handler is None:
             raise NotImplementedError("Either implement this method or pass handler to the constructor.")
         else:
-            await self._passed_handler(update, context)
+            return await self._passed_handler(update, context)
