@@ -29,7 +29,7 @@ class DelcrushHandler(ConversationHandler):
                     MessageHandler(filters.ALL & (~filters.COMMAND), self._on_wrong_username_format),
                 ]
             },
-            fallbacks=[CommandHandlerWithMetrics("cancel", self._on_cancel)], )
+            fallbacks=[MessageHandler(filters.COMMAND, self._on_cancel)], )
 
     @staticmethod
     async def _on_delcruch(update: Update, context: ContextTypes.DEFAULT_TYPE) -> _State:
@@ -65,5 +65,5 @@ class DelcrushHandler(ConversationHandler):
 
     @staticmethod
     async def _on_cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> _State:
-        await update.message.reply_text("Canceled!")
+        await update.message.reply_text("'delcrush' operation canceled!")
         return ConversationHandler.END

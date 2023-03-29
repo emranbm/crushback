@@ -28,7 +28,7 @@ class AddcrushHandler(ConversationHandler):
                     MessageHandler(filters.ALL & (~filters.COMMAND), self._on_wrong_username_format),
                 ]
             },
-            fallbacks=[CommandHandlerWithMetrics("cancel", self._on_cancel)], )
+            fallbacks=[MessageHandler(filters.COMMAND, self._on_cancel)], )
 
     @staticmethod
     async def _on_addcruch(update: Update, context: ContextTypes.DEFAULT_TYPE) -> _State:
@@ -64,5 +64,5 @@ class AddcrushHandler(ConversationHandler):
 
     @staticmethod
     async def _on_cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> _State:
-        await update.message.reply_text("Canceled!")
+        await update.message.reply_text("'addcrush' operation canceled!")
         return ConversationHandler.END
