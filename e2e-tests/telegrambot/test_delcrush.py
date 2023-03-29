@@ -16,3 +16,11 @@ class DelCrushTest(TelegramBotTestCase):
             await conv.send_message("/listcrushes")
             msg: Message = await conv.get_response()
             self.assertFalse("crush1" in msg.text)
+
+    async def test_cancel_should_work(self):
+        async with self._create_conversation() as conv:
+            await conv.send_message('/delcrush')
+            await conv.get_response()
+            await conv.send_message('/cancel')
+            msg: Message = await conv.get_response()
+            self.assertTrue("canceled" in msg.text.lower())

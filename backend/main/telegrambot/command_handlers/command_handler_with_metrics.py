@@ -25,4 +25,4 @@ class CommandHandlerWithMetrics(CommandHandler):
         if self._passed_handler is None:
             raise NotImplementedError("Either implement this method or pass handler to the constructor.")
         else:
-            self._passed_handler(update, context)
+            await self._passed_handler(update, context)

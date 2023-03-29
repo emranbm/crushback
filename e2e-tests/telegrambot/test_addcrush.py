@@ -1,3 +1,5 @@
+from unittest import skip
+
 from telethon.tl.custom import Message
 
 import testing_utils
@@ -18,3 +20,11 @@ class AddCrushTest(TelegramBotTestCase):
             await conv.get_response()  # Crush saved ack
             msg: Message = await conv.get_response(timeout=testing_utils.CHECK_MATCH_PERIOD_SECONDS + 2)  # Crush matched message
             self.assertTrue("congratulations" in msg.text.lower())
+
+    async def test_cancel_should_work(self):
+        async with self._create_conversation() as conv:
+            await conv.send_message('/addcrush')
+            await conv.get_response()
+            await conv.send_message('/cancel')
+            msg: Message = await conv.get_response()
+            self.assertTrue("canceled" in msg.text.lower())
