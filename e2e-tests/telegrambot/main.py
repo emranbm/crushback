@@ -1,4 +1,5 @@
 import subprocess
+import sys
 from time import sleep
 from typing import Optional
 
@@ -12,10 +13,14 @@ proxy_url: str
 
 
 def main():
+    testcase_name = None
+    if len(sys.argv) > 1:
+        testcase_name = sys.argv[1]
+
     setup_test_environment()
     # noinspection PyBroadException
     try:
-        run_tests()
+        run_tests(testcase_name)
     except BaseException:
         teardown_test_environment()
         exit(1)
@@ -38,8 +43,11 @@ def setup_test_environment():
     match_informer_process = _run_backend_manage_command("informmatches", "--period", str(testing_utils.CHECK_MATCH_PERIOD_SECONDS))
 
 
-def run_tests():
-    process = subprocess.Popen(['pipenv', 'run', 'python', '-m', 'unittest'])
+def run_tests(testcase_name: Optional[str] = None):
+    cmd = ['pipenv', 'run', 'python', '-m', 'unittest']
+    if testcase_name is not None:
+        cmd += [testcase_name]
+    process = subprocess.Popen(cmd)
     process.communicate()
     if process.returncode != 0:
         raise Exception("Tests failed.")
