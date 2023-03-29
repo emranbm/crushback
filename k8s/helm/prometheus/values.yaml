@@ -57,7 +57,7 @@ service:
   port: 80
 
 resources:
-  cpu: 100m
+  cpu: 300m
   memory: 100Mi
   ephemeral-storage: 150Mi
 
