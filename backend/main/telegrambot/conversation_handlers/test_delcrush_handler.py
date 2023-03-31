@@ -11,7 +11,7 @@ class DelCrushHandlerTest(TestCase):
         self.user = testing_utils.create_test_user()
 
     async def test_crush_should_get_deleted(self):
-        Crush.objects.acreate(crusher=self.user, telegram_username="crush_user")
+        await Crush.objects.acreate(crusher=self.user, telegram_username="crush_user")
         update = testing_utils.create_default_update()
         context = testing_utils.create_default_context()
         update.message.text = "@crush_user"
