@@ -2,6 +2,7 @@ import prometheus_client
 from django.conf import settings
 from telegram.ext import ApplicationBuilder, Application
 
+from main.telegrambot.command_handlers.botmoncheck_command_handler import BotmonCheckCommandHandler
 from main.telegrambot.command_handlers.list_crushes_handler import ListCrushesHandler
 from main.telegrambot.command_handlers.privacy_command_handler import PrivacyCommandHandler
 from main.telegrambot.command_handlers.start_command_handler import StartCommandHandler
@@ -27,6 +28,7 @@ class TelegramBotEngine:
         app = TelegramBotEngine.create_app()
         app.add_handler(StartCommandHandler())
         app.add_handler(PrivacyCommandHandler())
+        app.add_handler(BotmonCheckCommandHandler())
         app.add_handler(AddcrushHandler(), 1)
         app.add_handler(DelcrushHandler(), 2)
         app.add_handler(ListCrushesHandler())
