@@ -12,4 +12,4 @@ class BotmonCheckCommandHandler(CommandHandlerWithMetrics):
 
     # Override
     async def handle_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-        await update.message.reply_html("Pong!")
+        await update.message.reply_text("Pong!")
