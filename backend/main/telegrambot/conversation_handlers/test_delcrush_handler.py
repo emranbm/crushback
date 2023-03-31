@@ -3,11 +3,10 @@ from django.test import TestCase
 from main import testing_utils
 from main.matching.match_finder.telegram_match_finder import TelegramMatchFinder
 from main.models import Crush, MatchedRecord
-from main.telegrambot.conversation_handlers.addcrush_handler import AddcrushHandler
 from main.telegrambot.conversation_handlers.delcrush_handler import DelcrushHandler
 
 
-class AddcrushHandlerTest(TestCase):
+class DelCrushHandlerTest(TestCase):
     def setUp(self) -> None:
         self.user = testing_utils.create_test_user()
 
