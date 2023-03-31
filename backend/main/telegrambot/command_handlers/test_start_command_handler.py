@@ -1,5 +1,3 @@
-from django.test import TestCase
-
 from main import testing_utils, models
 from main.telegrambot.command_handlers.command_handler_with_metrics import CommandHandlerWithMetrics
 from main.telegrambot.command_handlers.start_command_handler import StartCommandHandler
