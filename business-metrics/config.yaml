@@ -23,9 +23,24 @@ collectors:
   - collector_name: main_collector
     metrics:
       - metric_name: crushback_users_total
-        type: counter
+        type: gauge
         help: 'Total number of users registered at Crushback.'
         key_labels: [] # Populated from the corresponding column of each row.
         static_labels: {}
         values: [count]
         query: "select count(*) as count from main_user"
+      - metric_name: crushback_crushes_total
+        type: gauge
+        help: 'Total number of distinct Crushes present at Crushback.'
+        key_labels: [] # Populated from the corresponding column of each row.
+        static_labels: {}
+        values: [count]
+        query: "select count(distinct telegram_username) as count from main_crush"
+      - metric_name: crushback_matchedrecords_total
+        type: gauge
+        help: 'Total number of MatchedRecords.'
+        key_labels: # Populated from the corresponding column of each row.
+          - informed
+        static_labels: {}
+        values: [count]
+        query: "select count(*) as count, informed from main_matchedrecord group by informed"
