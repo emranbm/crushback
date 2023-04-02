@@ -14,7 +14,7 @@ global:
 target:
   # Data source name always has a URI schema that matches the driver name. In some cases (e.g. MySQL)
   # the schema gets dropped or replaced to match the driver expected DSN format.
-  data_source_name: 'postgresql://$CRUSHBACK_DB_USER:$CRUSHBACK_DB_PASSWORD@$CRUSHBACK_DB_HOST:$CRUSHBACK_DB_PORT/$CRUSHBACK_DB_NAME'
+  data_source_name: 'postgres://$CRUSHBACK_DB_USER:$CRUSHBACK_DB_PASSWORD@$CRUSHBACK_DB_HOST:$CRUSHBACK_DB_PORT/$CRUSHBACK_DB_NAME'
 
   # Collectors (referenced by name) to execute on the target.
 collectors:
