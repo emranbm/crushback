@@ -38,10 +38,17 @@ spec:
             - name: http
               containerPort: 9399
               protocol: TCP
-          volumeMounts:
-            - name: config-volume
-              mountPath: /sql_exporter_config/
-              readOnly: true
+          env:
+            - name: CRUSHBACK_DB_HOST
+              value: "{{ .Values.database.host }}"
+            - name: CRUSHBACK_DB_PORT
+              value: "{{ .Values.database.port }}"
+            - name: CRUSHBACK_DB_NAME
+              value: "{{ .Values.database.name }}"
+            - name: CRUSHBACK_DB_USER
+              value: "{{ .Values.database.user }}"
+            - name: CRUSHBACK_DB_PASSWORD
+              value: "{{ .Values.database.password }}"
           livenessProbe:
             httpGet:
               path: /metrics
@@ -63,7 +70,3 @@ spec:
       tolerations:
       {{- toYaml . | nindent 8 }}
       {{- end }}
-      volumes:
-        - name: config-volume
-          configMap:
-            name: {{ include "crushback-metrics.configMapName" . }}

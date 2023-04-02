@@ -86,6 +86,11 @@ services:
       - API_BASE_URL
     ports:
       - "80:80"
+  crushback-metrics:
+    image: ${DOCKER_IMAGES_PREFIX}-metrics:${CRUSHBACK_VERSION}
+    build: ./business-metrics
+    ports:
+      - "9399:9399"
 
 volumes:
   backend_static_files:

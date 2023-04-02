@@ -49,10 +49,3 @@ Selector labels
 app.kubernetes.io/name: {{ include "crushback-metrics.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
-
-{{/*
-SQL exporter config ConfigMap name
-*/}}
-{{- define "crushback-metrics.configMapName" -}}
-{{- include "crushback-metrics.fullname" . }}-{{ toYaml .Values.sqlExporterConfig | sha256sum | substr 0 5 }}
-{{- end }}
