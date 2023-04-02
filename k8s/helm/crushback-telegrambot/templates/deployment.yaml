@@ -61,7 +61,7 @@ spec:
             - name: CRUSHBACK_TELEGRAMBOT_METRICS_PORT
               value: "{{ .Values.metricsPort }}"
             - name: CRUSHBACK_MAX_CRUSHES
-              value: {{ .Values.maxCrushes }}
+              value: "{{ .Values.maxCrushes }}"
           ports:
             - name: metrics
               containerPort: {{ .Values.metricsPort }}
