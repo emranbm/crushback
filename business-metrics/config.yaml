@@ -17,12 +17,12 @@ target:
   data_source_name: 'postgresql://$CRUSHBACK_DB_USER:$CRUSHBACK_DB_PASSWORD@$CRUSHBACK_DB_HOST:$CRUSHBACK_DB_PORT/$CRUSHBACK_DB_NAME'
 
   # Collectors (referenced by name) to execute on the target.
-  collectors:
-    - metrics:
-        - metric_name: crushback_users_total
-          type: counter
-          help: 'Total number of users registered at Crushback.'
-          key_labels: [] # Populated from the corresponding column of each row.
-          static_labels: {}
-          values: [count]
-          query: "select count(*) as count from main_user"
+collectors:
+  - metrics:
+      - metric_name: crushback_users_total
+        type: counter
+        help: 'Total number of users registered at Crushback.'
+        key_labels: [] # Populated from the corresponding column of each row.
+        static_labels: {}
+        values: [count]
+        query: "select count(*) as count from main_user"
