@@ -10,7 +10,7 @@ image:
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
   command:
-    - bash
+    - sh
     - -c
     - envsubst </sql_exporter_config/config.yaml > /sql_exporter_config/config-prod.yaml &&
       sql_exporter -config.file /sql_exporter_config/config-prod.yaml -logtostderr
