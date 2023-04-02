@@ -16,7 +16,7 @@ prometheusConfigs:
           - targets:
             - cluster-metrics
             - crushback-backend
-            - crushback-metrics:9399
+            - crushback-metrics
       - job_name: 'root-path-reader'
         metrics_path: /
         static_configs:
