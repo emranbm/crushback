@@ -234,4 +234,5 @@ jobs:
           helm upgrade -i crushback-metrics
           --atomic
           --set image.tag="master-${GITHUB_SHA}"
+          --set database.password="${{ secrets.POSTGRES_ROOT_PASSWORD }}"
           k8s/helm/crushback-metrics/
