@@ -25,6 +25,14 @@ class AddcrushHandlerTest(TestCase):
         await AddcrushHandler()._on_crush_username_entered(update, context)
         self.assertTrue("patient" in update.message.reply_html.call_args.args[0].lower())
 
+    @override_settings(MAX_CRUSHES=3)
+    async def test_should_hint_about_max_crushes_number_before_reaching_limit(self):
+        update = testing_utils.create_default_update()
+        context = testing_utils.create_default_context()
+        update.message.text = "@crush_user"
+        await AddcrushHandler()._on_crush_username_entered(update, context)
+        testing_utils.assert_str_in("3", update.message.reply_html.call_args.args[0])
+
     @override_settings(MAX_CRUSHES=1)
     async def test_should_send_max_crushes_number_when_reached_limit(self):
         await Crush.objects.acreate(crusher=self.user, telegram_username="crush_user")

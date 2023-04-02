@@ -1,6 +1,7 @@
 from datetime import datetime
 from enum import Enum
 
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.template.loader import render_to_string
 from telegram import Update
@@ -56,7 +57,9 @@ class AddcrushHandler(ConversationHandler):
             message = render_to_string('unexpected_error.html')
             await update.message.reply_html(message)
         else:
-            message = render_to_string('crush_saved_ack.html', {'crush_username': crush_username})
+            message = render_to_string('crush_saved_ack.html', {
+                'crush_username': crush_username,
+                'max_crushes': settings.MAX_CRUSHES or 'infinite'})
             await update.message.reply_html(message)
         elapsed_time = datetime.now() - start_time
         metrics.SERVER_LATENCY.labels(agent="telegrambot", action="addcrush").observe(elapsed_time.seconds)
