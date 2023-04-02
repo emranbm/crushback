@@ -2,6 +2,7 @@ import logging
 from typing import List
 
 from asgiref.sync import sync_to_async
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import connection
 from django.db.backends.utils import CursorWrapper
@@ -29,7 +30,10 @@ class TelegramMatchFinder(MatchFinder):
                            f"INNER JOIN {get_table_name(Crush)} AS user2_crush "
                            f"ON user2_crush.{col(Crush.crusher)} = user2.id "
                            f"WHERE user1_crush.{col(Crush.telegram_username)} = user2.{col(User.telegram_username)} "
-                           f"  AND user2_crush.{col(Crush.telegram_username)} = user1.{col(User.telegram_username)} ")
+                           f"  AND user2_crush.{col(Crush.telegram_username)} = user1.{col(User.telegram_username)} "
+                           f"  AND user1_crush.{col(Crush.created_at)} <= NOW() - INTERVAL '{settings.NEW_CRUSH_MATCH_FREEZE_MINUTES} minutes'"
+                           f"  AND user2_crush.{col(Crush.created_at)} <= NOW() - INTERVAL '{settings.NEW_CRUSH_MATCH_FREEZE_MINUTES} minutes'"
+                           )
             matches = cursor.fetchall()
             new_matches: List[MatchedRecord] = []
             for user_id_1, user_id_2 in matches:

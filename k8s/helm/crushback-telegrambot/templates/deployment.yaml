@@ -62,6 +62,8 @@ spec:
               value: "{{ .Values.metricsPort }}"
             - name: CRUSHBACK_MAX_CRUSHES
               value: "{{ .Values.maxCrushes }}"
+            - name: CRUSHBACK_NEW_CRUSH_MATCH_FREEZE_MINUTES
+              value: "{{ .Values.crushMatchFreezeMinutes }}"
           ports:
             - name: metrics
               containerPort: {{ .Values.metricsPort }}

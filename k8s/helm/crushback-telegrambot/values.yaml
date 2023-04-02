@@ -9,6 +9,7 @@ proxyUrl: "socks5://socks-proxy:8123"
 matchInformerPeriodSeconds: 300
 metricsPort: 9090
 maxCrushes: 3
+crushMatchFreezeMinutes: 15
 
 replicaCount: 1
 

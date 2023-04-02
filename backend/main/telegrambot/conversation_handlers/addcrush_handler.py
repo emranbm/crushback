@@ -59,7 +59,9 @@ class AddcrushHandler(ConversationHandler):
         else:
             message = render_to_string('crush_saved_ack.html', {
                 'crush_username': crush_username,
-                'max_crushes': settings.MAX_CRUSHES or 'infinite'})
+                'MAX_CRUSHES': settings.MAX_CRUSHES or 'infinite',
+                'NEW_CRUSH_MATCH_FREEZE_MINUTES': settings.NEW_CRUSH_MATCH_FREEZE_MINUTES,
+            })
             await update.message.reply_html(message)
         elapsed_time = datetime.now() - start_time
         metrics.SERVER_LATENCY.labels(agent="telegrambot", action="addcrush").observe(elapsed_time.seconds)

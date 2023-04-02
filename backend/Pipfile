@@ -12,6 +12,7 @@ psycopg2-binary = "==2.9.5"
 django-prometheus = "==2.2.0"
 
 [dev-packages]
+freezegun = "==1.2.2"
 
 [requires]
 python_version = "3.8"
