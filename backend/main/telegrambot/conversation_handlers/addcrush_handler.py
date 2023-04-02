@@ -1,7 +1,6 @@
 from datetime import datetime
 from enum import Enum
 
-import telegram
 from django.core.exceptions import ValidationError
 from django.template.loader import render_to_string
 from telegram import Update
@@ -10,7 +9,6 @@ from telegram.ext import ConversationHandler, CommandHandler, ContextTypes, Mess
 from main import metrics
 from main.models import Crush
 from main.telegrambot import utils
-from main.telegrambot.command_handlers.command_handler_with_metrics import CommandHandlerWithMetrics
 
 
 class _State(Enum):
@@ -49,6 +47,8 @@ class AddcrushHandler(ConversationHandler):
         crush_username = update.message.text
         try:
             await Crush.objects.acreate(crusher=user, telegram_username=crush_username.lstrip("@"))
+        except Crush.MaxCrushesLimit as e:
+            await update.message.reply_text(str(e))
         except ValidationError:
             message = render_to_string('duplicate_add_crush_error.html')
             await update.message.reply_html(message)

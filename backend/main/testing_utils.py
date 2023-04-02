@@ -1,9 +1,8 @@
-import unittest
 from random import randint
 from typing import Optional
 from unittest.mock import Mock, AsyncMock, patch
 
-from asgiref.sync import sync_to_async, async_to_sync
+from asgiref.sync import sync_to_async
 from telegram import Update
 from telegram.ext import ContextTypes, Application
 
@@ -88,3 +87,7 @@ def mock_telegram_bot_engine(func):
         func(self, app)
 
     return patch.object(TelegramBotEngine, 'create_app')(f)
+
+
+def assert_str_in(substring, string) -> None:
+    assert substring in string, f"'{substring}' not found in '{string}'"

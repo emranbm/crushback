@@ -1,8 +1,8 @@
 import random
 import string
 
+from django.conf import settings
 from django.contrib.auth.models import AbstractUser
-from django.core.exceptions import ValidationError
 from django.db import models
 from django_prometheus.models import ExportModelOperationsMixin
 
@@ -56,13 +56,32 @@ class Crush(Contactable, ExportModelOperationsMixin("Crush")):
             models.UniqueConstraint(fields=['telegram_username', 'crusher'], name="duplicate_crush_preventer")
         ]
 
+    class NoContactPointError(Exception):
+        def __init__(self):
+            super().__init__("Crush should have at least one contact point.")
+
+    class MaxCrushesLimit(Exception):
+        def __init__(self):
+            super().__init__(f"Maximum number of crushes ({settings.MAX_CRUSHES}) has been reached!")
+
     def clean(self):
         super().clean()
         self._check_at_least_one_contact_point_should_be_non_null()
+        self._check_max_crushes_limit()
 
     def _check_at_least_one_contact_point_should_be_non_null(self) -> None:
         if not self.telegram_username:
-            raise ValidationError("Crush should have at least one contact point.")
+            raise Crush.NoContactPointError()
+
+    def _check_max_crushes_limit(self) -> None:
+        is_edit = self.pk is not None
+        if is_edit:
+            return
+        if settings.MAX_CRUSHES == 0:
+            return
+        current_count = Crush.objects.filter(crusher_id=self.crusher_id).count()
+        if current_count >= settings.MAX_CRUSHES:
+            raise Crush.MaxCrushesLimit()
 
 
 class MatchedRecord(_AutoCleanedModel, ExportModelOperationsMixin("MatchedRecord")):

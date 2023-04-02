@@ -1,4 +1,4 @@
-from django.test import TestCase
+from django.test import TestCase, override_settings
 
 from main import testing_utils
 from main.models import Crush
@@ -24,3 +24,12 @@ class AddcrushHandlerTest(TestCase):
         update.message.text = "@crush_user"
         await AddcrushHandler()._on_crush_username_entered(update, context)
         self.assertTrue("patient" in update.message.reply_html.call_args.args[0].lower())
+
+    @override_settings(MAX_CRUSHES=1)
+    async def test_should_send_max_crushes_number_when_reached_limit(self):
+        await Crush.objects.acreate(crusher=self.user, telegram_username="crush_user")
+        update = testing_utils.create_default_update()
+        context = testing_utils.create_default_context()
+        update.message.text = "@crush_user_2"
+        await AddcrushHandler()._on_crush_username_entered(update, context)
+        testing_utils.assert_str_in("1", update.message.reply_text.call_args.args[0])

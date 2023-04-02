@@ -33,16 +33,16 @@ CURRENT_APPS = [
 ]
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'rest_framework',
-    'rest_framework.authtoken',
-    'django_prometheus',
-] + CURRENT_APPS
+                     'django.contrib.admin',
+                     'django.contrib.auth',
+                     'django.contrib.contenttypes',
+                     'django.contrib.sessions',
+                     'django.contrib.messages',
+                     'django.contrib.staticfiles',
+                     'rest_framework',
+                     'rest_framework.authtoken',
+                     'django_prometheus',
+                 ] + CURRENT_APPS
 
 MIDDLEWARE = [
     'django_prometheus.middleware.PrometheusBeforeMiddleware',
@@ -168,3 +168,5 @@ DRF_RECAPTCHA_TESTING = True
 TELEGRAM_BOT_TOKEN = os.environ.get('CRUSHBACK_TELEGRAM_BOT_TOKEN', 'dummy')
 TELEGRAM_PROXY_URL = os.environ.get('CRUSHBACK_TELEGRAM_PROXY_URL', None)
 TELEGRAMBOT_METRICS_PORT = int(os.environ.get('CRUSHBACK_TELEGRAMBOT_METRICS_PORT', 9090))
+
+MAX_CRUSHES = int(os.environ.get('CRUSHBACK_MAX_CRUSHES', 0))

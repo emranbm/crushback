@@ -1,5 +1,5 @@
 from django.core.exceptions import ValidationError
-from django.test import TestCase
+from django.test import TestCase, override_settings
 
 from main.models import Crush, User, MatchedRecord
 
@@ -9,7 +9,7 @@ class CrushTest(TestCase):
         self.user = User.objects.create_user("test")
 
     def test_cant_save_crush_without_contact_point(self):
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(Crush.NoContactPointError):
             Crush(name="test", crusher=self.user).save()
 
     def test_can_save_crush_without_name(self):
@@ -20,6 +20,17 @@ class CrushTest(TestCase):
         with self.assertRaises(ValidationError):
             Crush(telegram_username="test", crusher=self.user).save()
         self.assertEqual(1, Crush.objects.filter(telegram_username="test").count())
+
+    @override_settings(MAX_CRUSHES=1)
+    def test_can_not_save_more_than_limit(self):
+        Crush(telegram_username="crush1", crusher=self.user).save()
+        with self.assertRaises(Crush.MaxCrushesLimit):
+            Crush(telegram_username="crush2", crusher=self.user).save()
+
+    @override_settings(MAX_CRUSHES=0)
+    def test_max_crush_of_0_is_assumed_as_no_limit(self):
+        for i in range(0, 100):
+            Crush(telegram_username=f"crush{i}", crusher=self.user).save()
 
 
 class MatchedRecordTest(TestCase):
