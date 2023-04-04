@@ -8,6 +8,7 @@ from telegram import Update
 from telegram.ext import ConversationHandler, CommandHandler, ContextTypes, MessageHandler, filters
 
 from main import metrics
+from main.business_error import BusinessLogicError
 from main.models import Crush
 from main.telegrambot import utils
 
@@ -48,8 +49,8 @@ class AddcrushHandler(ConversationHandler):
         crush_username = update.message.text
         try:
             await Crush.objects.acreate(crusher=user, telegram_username=crush_username.lstrip("@"))
-        except Crush.MaxCrushesLimit as e:
-            await update.message.reply_text(str(e))
+        except BusinessLogicError as e:
+            await update.message.reply_text(e.message)
         except ValidationError:
             message = render_to_string('duplicate_add_crush_error.html')
             await update.message.reply_html(message)

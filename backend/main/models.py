@@ -57,11 +57,11 @@ class Crush(Contactable, ExportModelOperationsMixin("Crush")):
             models.UniqueConstraint(fields=['telegram_username', 'crusher'], name="duplicate_crush_preventer")
         ]
 
-    class NoContactPointError(Exception):
+    class NoContactPointError(BusinessLogicError):
         def __init__(self):
             super().__init__("Crush should have at least one contact point.")
 
-    class MaxCrushesLimit(Exception):
+    class MaxCrushesLimit(BusinessLogicError):
         def __init__(self):
             super().__init__(f"Maximum number of crushes ({settings.MAX_CRUSHES}) has been reached!")
 
