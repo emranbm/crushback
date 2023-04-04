@@ -36,6 +36,11 @@ class Contactable(_AutoCleanedModel):
     class Meta:
         abstract = True
 
+    def save(self, *args, **kwargs):
+        if self.telegram_username:
+            self.telegram_username = self.telegram_username.lower()
+        super().save(*args, **kwargs)
+
 
 class User(AbstractUser, Contactable, ExportModelOperationsMixin("User")):
     first_name = models.CharField(null=False, blank=True, default='', max_length=64)
@@ -109,6 +114,7 @@ class MatchedRecord(_AutoCleanedModel, ExportModelOperationsMixin("MatchedRecord
         ]
 
     def clean(self):
+        super().clean()
         if self.left_user_id >= self.right_user_id:
             raise AssertionError("Convention violated: The user with lower id should be left, and the one with greater id should be right.")
 

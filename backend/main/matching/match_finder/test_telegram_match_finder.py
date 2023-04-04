@@ -5,6 +5,7 @@ from freezegun import freeze_time
 
 from main import testing_utils
 from main.matching.match_finder.telegram_match_finder import TelegramMatchFinder
+from main.models import Crush
 
 
 class TelegramMatchFinderTest(TestCase):
@@ -55,3 +56,9 @@ class TelegramMatchFinderTest(TestCase):
         await testing_utils.create_user_and_their_crush_async("crush1", "crush2")
         new_matches = await TelegramMatchFinder().save_new_matched_records()
         self.assertEqual(0, len(new_matches))
+
+    async def test_should_ignore_case_on_matching(self):
+        await testing_utils.create_user_and_their_crush_async("user1", "uSer2")
+        await testing_utils.create_user_and_their_crush_async("usEr2", "uSeR1")
+        new_matches = await TelegramMatchFinder().save_new_matched_records()
+        self.assertEqual(1, len(new_matches))

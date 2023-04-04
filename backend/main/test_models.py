@@ -5,6 +5,13 @@ from main.business_error import BusinessLogicError
 from main.models import Crush, User, MatchedRecord
 
 
+class UserTest(TestCase):
+    def test_should_save_telegram_username_in_lowercase(self):
+        user = User.objects.create_user(username="someUsername", telegram_username="tEsT")
+        self.assertEqual("test", user.telegram_username)
+        self.assertEqual("someUsername", user.username)
+
+
 class CrushTest(TestCase):
     def setUp(self) -> None:
         self.user = User.objects.create_user("test_user")
@@ -17,6 +24,12 @@ class CrushTest(TestCase):
 
     def test_can_save_crush_without_name(self):
         Crush(telegram_username="test", crusher=self.user).save()
+
+    def test_should_save_telegram_username_in_lowercase(self):
+        crush = Crush(telegram_username="tEsT", crusher=self.user)
+        crush.save()
+        self.assertEqual("test", crush.telegram_username)
+
 
     def test_can_not_save_duplicate_crush(self):
         Crush(telegram_username="test", crusher=self.user).save()
