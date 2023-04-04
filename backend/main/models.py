@@ -6,6 +6,8 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django_prometheus.models import ExportModelOperationsMixin
 
+from main.business_error import BusinessLogicError
+
 
 class _AutoCleanedModel(models.Model):
     def __init__(self, *args, **kwargs):
@@ -65,14 +67,23 @@ class Crush(Contactable, ExportModelOperationsMixin("Crush")):
         def __init__(self):
             super().__init__(f"Maximum number of crushes ({settings.MAX_CRUSHES}) has been reached!")
 
+    class SelfCrushError(BusinessLogicError):
+        def __init__(self):
+            super().__init__(f"Can not crush on self!")
+
     def clean(self):
         super().clean()
         self._check_at_least_one_contact_point_should_be_non_null()
+        self._check_not_crushed_on_self()
         self._check_max_crushes_limit()
 
     def _check_at_least_one_contact_point_should_be_non_null(self) -> None:
         if not self.telegram_username:
             raise Crush.NoContactPointError()
+
+    def _check_not_crushed_on_self(self) -> None:
+        if self.crusher.telegram_username.lower() == self.telegram_username.lower():
+            raise Crush.SelfCrushError()
 
     def _check_max_crushes_limit(self) -> None:
         is_edit = self.pk is not None

@@ -1,12 +1,15 @@
 from django.core.exceptions import ValidationError
 from django.test import TestCase, override_settings
 
+from main.business_error import BusinessLogicError
 from main.models import Crush, User, MatchedRecord
 
 
 class CrushTest(TestCase):
     def setUp(self) -> None:
-        self.user = User.objects.create_user("test")
+        self.user = User.objects.create_user("test_user")
+        self.user.telegram_username = "test_user_telegram_username"
+        self.user.save()
 
     def test_cant_save_crush_without_contact_point(self):
         with self.assertRaises(Crush.NoContactPointError):
@@ -31,6 +34,10 @@ class CrushTest(TestCase):
     def test_max_crush_of_0_is_assumed_as_no_limit(self):
         for i in range(0, 100):
             Crush(telegram_username=f"crush{i}", crusher=self.user).save()
+
+    def test_cant_save_self_as_crush(self):
+        with self.assertRaises(BusinessLogicError):
+            Crush(telegram_username=self.user.telegram_username, crusher=self.user).save()
 
 
 class MatchedRecordTest(TestCase):
