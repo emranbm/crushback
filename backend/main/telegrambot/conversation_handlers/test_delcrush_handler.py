@@ -20,7 +20,7 @@ class DelCrushHandlerTest(TestCase):
                          "The crush found in database!")
 
     async def test_should_not_delete_matched_record_when_crush_is_deleted(self):
-        user, _ = await testing_utils.create_user_and_their_crush_async("tg1", "tg2")
+        user = await testing_utils.create_user_and_their_crush_async("tg1", "tg2")
         await testing_utils.create_user_and_their_crush_async("tg2", "tg1")
         self.assertEqual(0, await MatchedRecord.objects.acount())
         await TelegramMatchFinder().save_new_matched_records()
