@@ -13,13 +13,13 @@ class ListCrushesCommandHandlerTest(CommandHandlerBaseTestCase):
         self.assertTrue("/addcrush" in resp)
 
     async def test_should_show_crush(self):
-        user = await testing_utils.create_user_and_their_crush_async("me", "my_crush")
+        user, _ = await testing_utils.create_user_and_their_crush_async("me", "my_crush")
         update = testing_utils.create_default_update(user)
         resp = await self.trigger_handler(update)
         self.assertTrue("@my_crush" in resp)
 
     async def test_should_not_show_others_crushes(self):
-        user1 = await testing_utils.create_user_and_their_crush_async("me", "my_crush")
+        user1, _ = await testing_utils.create_user_and_their_crush_async("me", "my_crush")
         await testing_utils.create_user_and_their_crush_async("someone_else", "his_crush")
         update = testing_utils.create_default_update(user1)
         resp = await self.trigger_handler(update)
