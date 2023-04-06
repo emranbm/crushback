@@ -16,4 +16,8 @@ jobs:
           KUBE_API_SERVER="${{ vars.KUBE_API_SERVER }}"
           KUBE_NAMESPACE="${{ vars.KUBE_NAMESPACE }}"
           KUBE_API_TOKEN="${{ secrets.KUBE_API_TOKEN }}"
-          ./.github/scripts/restore-backup.sh "${{ github.event.inputs.backup_file_url }}"
+          ./.github/scripts/setup-kubectl.sh
+      - name: Restore backup
+        run: |
+          BACKUP_FILE_URL=$(cat $GITHUB_EVENT_PATH | jq -r '.inputs.backup_file_url' )
+          ./.github/scripts/restore-backup.sh "$BACKUP_FILE_URL"
