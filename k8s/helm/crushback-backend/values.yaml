@@ -28,7 +28,7 @@ database:
 backup:
   image: postgres:14.6-alpine3.17
   dropboxToken: dummy
-  schedule: "* * * * *"
+  schedule: "0 5 * * *"
 
 imagePullSecrets: [ ]
 nameOverride: ""
