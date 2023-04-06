@@ -44,6 +44,11 @@ spec:
                     https://content.dropboxapi.com/2/files/upload \
                     --header "Authorization: Bearer $DROPBOX_TOKEN" \
                     --header "Dropbox-API-Arg: {\"path\": \"/backups/day_of_month_${day_of_month}.sql\", \"mode\": \"overwrite\"}" \
+                    --header "Content-Type: application/octet-stream" &&
+                  wget -O- --post-file /tmp/backup.sql \
+                    https://content.dropboxapi.com/2/files/upload \
+                    --header "Authorization: Bearer $DROPBOX_TOKEN" \
+                    --header "Dropbox-API-Arg: {\"path\": \"/backups/latest.sql\", \"mode\": \"overwrite\"}" \
                     --header "Content-Type: application/octet-stream"
   schedule: "{{ .Values.backup.schedule }}"
   concurrencyPolicy: Forbid
