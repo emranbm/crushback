@@ -25,6 +25,11 @@ database:
   user: root
   password: dummy
 
+backup:
+  image: postgres:14.6-alpine3.17
+  dropboxToken: dummy
+  schedule: "* * * * *"
+
 imagePullSecrets: [ ]
 nameOverride: ""
 fullnameOverride: ""

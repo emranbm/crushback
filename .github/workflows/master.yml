@@ -133,6 +133,7 @@ jobs:
           --set secretKey="${{ secrets.CRUSHBACK_SECRET_KEY }}"
           --set recaptchaServerKey="${{ secrets.RECAPTCHA_SERVER_KEY }}"
           --set database.password="${{ secrets.POSTGRES_ROOT_PASSWORD }}"
+          --set backup.dropboxToken="${{ secrets.DROPBOX_TOKEN }}"
           k8s/helm/crushback-backend/
   deploy-telegrambot:
     runs-on: ubuntu-20.04

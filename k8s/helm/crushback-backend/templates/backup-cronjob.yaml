@@ -1,0 +1,51 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: {{ include "crushback-backend.fullname" . }}-backup-cronjob
+  labels:
+  {{- include "crushback-backend.labels" . | nindent 4 }}
+spec:
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: Never
+          {{- with .Values.imagePullSecrets }}
+          imagePullSecrets:
+          {{- toYaml . | nindent 12 }}
+          {{- end }}
+          containers:
+            - name: {{ include "crushback-backend.fullname" . }}-backup-job
+              image: {{ .Values.backup.image }}
+              imagePullPolicy: IfNotPresent
+              env:
+                - name: CRUSHBACK_DB_HOST
+                  value: "{{ .Values.database.host }}"
+                - name: CRUSHBACK_DB_PORT
+                  value: "{{ .Values.database.port }}"
+                - name: CRUSHBACK_DB_NAME
+                  value: "{{ .Values.database.name }}"
+                - name: CRUSHBACK_DB_USER
+                  value: "{{ .Values.database.user }}"
+                - name: CRUSHBACK_DB_PASSWORD
+                  value: "{{ .Values.database.password }}"
+                - name: DROPBOX_TOKEN
+                  value: "{{ .Values.backup.dropboxToken }}"
+              command: ["bash"]
+              args:
+                - -c
+                - |
+                  export PGPASSWORD="$CRUSHBACK_DB_PASSWORD" &&
+                  pg_dump --file /tmp/backup.sql --host $CRUSHBACK_DB_HOST \
+                    --port $CRUSHBACK_DB_PORT --username $CRUSHBACK_DB_USER --verbose \
+                    --encoding "UTF8" $CRUSHBACK_DB_NAME &&
+                  day_of_month=$(TZ=Asia/Tehran date +%d) &&
+                  wget -O- --post-file /tmp/backup.sql \
+                    https://content.dropboxapi.com/2/files/upload \
+                    --header "Authorization: Bearer $DROPBOX_TOKEN" \
+                    --header "Dropbox-API-Arg: {\"path\": \"/backups/day_of_month_${day_of_month}.sql\", \"mode\": \"overwrite\"}" \
+                    --header "Content-Type: application/octet-stream"
+  schedule: "{{ .Values.backup.schedule }}"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 2
