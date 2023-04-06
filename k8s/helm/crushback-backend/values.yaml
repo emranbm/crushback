@@ -29,6 +29,9 @@ backup:
   image: postgres:14.6-alpine3.17
   dropboxToken: dummy
   schedule: "0 5 * * *"
+  restore:
+    create: false # Make true to generate job from template and delete -> reapply it manually (by kubectl apply)
+    backupFileURL: https://dummy.com/backup.sql
 
 imagePullSecrets: [ ]
 nameOverride: ""

@@ -1,0 +1,46 @@
+# This manifest is not designed to be used alongside the others in a helm install command;
+# instead, it is just used for applying by kubectl to run the job whenever a restore is needed.
+# See .github/scripts/restore-backup.sh for its usage.
+{{ if .Values.backup.restore.create }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "crushback-backend.fullname" . }}-restore-job
+  labels:
+  {{- include "crushback-backend.labels" . | nindent 4 }}
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+      {{- toYaml . | nindent 12 }}
+      {{- end }}
+      containers:
+        - name: {{ include "crushback-backend.fullname" . }}-restore
+          image: {{ .Values.backup.image }}
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: CRUSHBACK_DB_HOST
+              value: "{{ .Values.database.host }}"
+            - name: CRUSHBACK_DB_PORT
+              value: "{{ .Values.database.port }}"
+            - name: CRUSHBACK_DB_NAME
+              value: "{{ .Values.database.name }}"
+            - name: CRUSHBACK_DB_USER
+              value: "{{ .Values.database.user }}"
+            - name: CRUSHBACK_DB_PASSWORD
+              value: "{{ .Values.database.password }}"
+            - name: DROPBOX_TOKEN
+              value: "{{ .Values.backup.dropboxToken }}"
+            - name: CRUSHBACK_BACKUP_FILE_URL
+              value: "{{ .Values.backup.restore.backupFileURL }}"
+          command: [ "bash" ]
+          args:
+            - -c
+            - |
+              export PGPASSWORD="$CRUSHBACK_DB_PASSWORD" &&
+              wget "$CRUSHBACK_BACKUP_FILE_URL" -O /tmp/backup.sql &&
+              psql --host $CRUSHBACK_DB_HOST \
+                --port $CRUSHBACK_DB_PORT --username $CRUSHBACK_DB_USER $CRUSHBACK_DB_NAME < /tmp/backup.sql
+{{end}}

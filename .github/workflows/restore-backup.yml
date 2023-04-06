@@ -1,0 +1,19 @@
+---
+name: Restore database backup
+on:
+  workflow_dispatch:
+    inputs:
+      backup_file_url:
+        description: Backup file URL (e.g. https://dummy.com/backup.sql)
+        required: true
+jobs:
+  restore-backup:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Kube config
+        run: >
+          KUBE_API_SERVER="${{ vars.KUBE_API_SERVER }}"
+          KUBE_NAMESPACE="${{ vars.KUBE_NAMESPACE }}"
+          KUBE_API_TOKEN="${{ secrets.KUBE_API_TOKEN }}"
+          ./.github/scripts/restore-backup.sh "${{ github.event.inputs.backup_file_url }}"
