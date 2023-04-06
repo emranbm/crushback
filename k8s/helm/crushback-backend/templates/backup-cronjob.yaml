@@ -38,7 +38,7 @@ spec:
                   export PGPASSWORD="$CRUSHBACK_DB_PASSWORD" &&
                   pg_dump --file /tmp/backup.sql --host $CRUSHBACK_DB_HOST \
                     --port $CRUSHBACK_DB_PORT --username $CRUSHBACK_DB_USER --verbose \
-                    --encoding "UTF8" $CRUSHBACK_DB_NAME &&
+                    --encoding "UTF8" --clean $CRUSHBACK_DB_NAME &&
                   day_of_month=$(TZ=Asia/Tehran date +%d) &&
                   wget -O- --post-file /tmp/backup.sql \
                     https://content.dropboxapi.com/2/files/upload \
