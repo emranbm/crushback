@@ -19,8 +19,4 @@ jobs:
           KUBE_API_TOKEN="${{ secrets.KUBE_API_TOKEN }}"
           ./.github/scripts/setup-kubectl.sh
       - name: Restore backup
-        run: >
-          ./.github/scripts/restore-backup.sh
-            "${{ secrets.POSTGRES_ROOT_PASSWORD }}"
-            "${{ secrets.DROPBOX_TOKEN }}"
-            "${{ github.event.inputs.backup_filename }}"
+        run: ./.github/scripts/restore-backup.sh "${{ secrets.POSTGRES_ROOT_PASSWORD }}" "${{ secrets.DROPBOX_TOKEN }}" "${{ github.event.inputs.backup_filename }}"
