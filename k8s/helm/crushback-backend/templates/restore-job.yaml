@@ -33,14 +33,17 @@ spec:
               value: "{{ .Values.database.password }}"
             - name: DROPBOX_TOKEN
               value: "{{ .Values.backup.dropboxToken }}"
-            - name: CRUSHBACK_BACKUP_FILE_URL
-              value: "{{ .Values.backup.restore.backupFileURL }}"
+            - name: CRUSHBACK_BACKUP_FILENAME
+              value: "{{ .Values.backup.restore.backupFilename }}"
           command: [ "bash" ]
           args:
             - -c
             - |
               export PGPASSWORD="$CRUSHBACK_DB_PASSWORD" &&
-              wget "$CRUSHBACK_BACKUP_FILE_URL" -O /tmp/backup.sql &&
+              wget -O /tmp/backup.sql \
+                    https://content.dropboxapi.com/2/files/download \
+                    --header "Authorization: Bearer $DROPBOX_TOKEN" \
+                    --header "Dropbox-API-Arg: {\"path\": \"/backups/$CRUSHBACK_BACKUP_FILENAME\"}" &&
               psql --host $CRUSHBACK_DB_HOST \
                 --port $CRUSHBACK_DB_PORT --username $CRUSHBACK_DB_USER $CRUSHBACK_DB_NAME < /tmp/backup.sql
 {{end}}

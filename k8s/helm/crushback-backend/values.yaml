@@ -31,7 +31,7 @@ backup:
   schedule: "0 5 * * *"
   restore:
     create: false # Make true to generate job from template and delete -> reapply it manually (by kubectl apply)
-    backupFileURL: https://dummy.com/backup.sql
+    backupFilename: latest.sql
 
 imagePullSecrets: [ ]
 nameOverride: ""
