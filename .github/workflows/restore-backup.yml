@@ -20,4 +20,4 @@ jobs:
       - name: Restore backup
         run: |
           BACKUP_FILE_URL=$(cat $GITHUB_EVENT_PATH | jq -r '.inputs.backup_file_url' )
-          ./.github/scripts/restore-backup.sh "$BACKUP_FILE_URL"
+          ./.github/scripts/restore-backup.sh "${{ secrets.POSTGRES_ROOT_PASSWORD }}" "$BACKUP_FILE_URL"
