@@ -5,7 +5,6 @@ from freezegun import freeze_time
 
 from main import testing_utils
 from main.matching.match_finder.telegram_match_finder import TelegramMatchFinder
-from main.models import Crush
 
 
 class TelegramMatchFinderTest(TestCase):
@@ -21,20 +20,20 @@ class TelegramMatchFinderTest(TestCase):
 
     @override_settings(NEW_CRUSH_MATCH_FREEZE_MINUTES=5)
     async def test_newly_added_crush_doesnt_get_matched_before_freeze_period(self):
-        ten_min_earlier = datetime.now() - timedelta(minutes=1)
-        with freeze_time(ten_min_earlier):
-            await testing_utils.create_user_and_their_crush_async("tg1", "tg2")
-            await testing_utils.create_user_and_their_crush_async("tg2", "tg1")
-        new_matches = await TelegramMatchFinder().save_new_matched_records()
+        await testing_utils.create_user_and_their_crush_async("tg1", "tg2")
+        await testing_utils.create_user_and_their_crush_async("tg2", "tg1")
+        one_min_later = datetime.now() + timedelta(minutes=1)
+        with freeze_time(one_min_later):
+            new_matches = await TelegramMatchFinder().save_new_matched_records()
         self.assertEqual(0, len(new_matches))
 
     @override_settings(NEW_CRUSH_MATCH_FREEZE_MINUTES=5)
     async def test_newly_added_crush_gets_matched_after_freeze_period(self):
-        ten_min_earlier = datetime.now() - timedelta(minutes=10)
-        with freeze_time(ten_min_earlier):
-            await testing_utils.create_user_and_their_crush_async("tg1", "tg2")
-            await testing_utils.create_user_and_their_crush_async("tg2", "tg1")
-        new_matches = await TelegramMatchFinder().save_new_matched_records()
+        await testing_utils.create_user_and_their_crush_async("tg1", "tg2")
+        await testing_utils.create_user_and_their_crush_async("tg2", "tg1")
+        ten_min_later = datetime.now() + timedelta(minutes=10)
+        with freeze_time(ten_min_later):
+            new_matches = await TelegramMatchFinder().save_new_matched_records()
         self.assertEqual(1, len(new_matches))
 
     async def test_should_only_find_new_matches(self):
