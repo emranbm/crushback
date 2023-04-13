@@ -31,8 +31,12 @@ spec:
               value: "{{ .Values.database.user }}"
             - name: CRUSHBACK_DB_PASSWORD
               value: "{{ .Values.database.password }}"
-            - name: DROPBOX_TOKEN
-              value: "{{ .Values.backup.dropboxToken }}"
+            - name: AWS_ACCESS_KEY_ID
+              value: "{{ .Values.backup.s3.accessKey }}"
+            - name: AWS_SECRET_ACCESS_KEY
+              value: "{{ .Values.backup.s3.secretKey }}"
+            - name: S3_ENDPOINT_URL
+              value: "{{ .Values.backup.s3.endpoint }}"
             - name: CRUSHBACK_BACKUP_FILENAME
               value: "{{ .Values.backup.restore.backupFilename }}"
           command: [ "bash" ]
@@ -40,10 +44,7 @@ spec:
             - -c
             - |
               export PGPASSWORD="$CRUSHBACK_DB_PASSWORD" &&
-              wget -O /tmp/backup.sql \
-                    https://content.dropboxapi.com/2/files/download \
-                    --header "Authorization: Bearer $DROPBOX_TOKEN" \
-                    --header "Dropbox-API-Arg: {\"path\": \"/backups/$CRUSHBACK_BACKUP_FILENAME\"}" &&
+              aws s3 --endpoint $S3_ENDPOINT_URL cp "s3://crushback/backups/$CRUSHBACK_BACKUP_FILENAME" /tmp/backup.sql &&
               psql --host $CRUSHBACK_DB_HOST \
                 --port $CRUSHBACK_DB_PORT --username $CRUSHBACK_DB_USER $CRUSHBACK_DB_NAME < /tmp/backup.sql
 {{end}}

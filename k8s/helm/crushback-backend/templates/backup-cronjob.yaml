@@ -29,8 +29,12 @@ spec:
                   value: "{{ .Values.database.user }}"
                 - name: CRUSHBACK_DB_PASSWORD
                   value: "{{ .Values.database.password }}"
-                - name: DROPBOX_TOKEN
-                  value: "{{ .Values.backup.dropboxToken }}"
+                - name: AWS_ACCESS_KEY_ID
+                  value: "{{ .Values.backup.s3.accessKey }}"
+                - name: AWS_SECRET_ACCESS_KEY
+                  value: "{{ .Values.backup.s3.secretKey }}"
+                - name: S3_ENDPOINT_URL
+                  value: "{{ .Values.backup.s3.endpoint }}"
               command: ["bash"]
               args:
                 - -c
@@ -40,16 +44,8 @@ spec:
                     --port $CRUSHBACK_DB_PORT --username $CRUSHBACK_DB_USER --verbose \
                     --encoding "UTF8" --clean $CRUSHBACK_DB_NAME &&
                   day_of_month=$(TZ=Asia/Tehran date +%d) &&
-                  wget -O- --post-file /tmp/backup.sql \
-                    https://content.dropboxapi.com/2/files/upload \
-                    --header "Authorization: Bearer $DROPBOX_TOKEN" \
-                    --header "Dropbox-API-Arg: {\"path\": \"/backups/day_of_month_${day_of_month}.sql\", \"mode\": \"overwrite\"}" \
-                    --header "Content-Type: application/octet-stream" &&
-                  wget -O- --post-file /tmp/backup.sql \
-                    https://content.dropboxapi.com/2/files/upload \
-                    --header "Authorization: Bearer $DROPBOX_TOKEN" \
-                    --header "Dropbox-API-Arg: {\"path\": \"/backups/latest.sql\", \"mode\": \"overwrite\"}" \
-                    --header "Content-Type: application/octet-stream"
+                  aws s3 --endpoint $S3_ENDPOINT_URL cp /tmp/backup.sql s3://crushback/backups/${day_of_month}_of_month.sql &&
+                  aws s3 --endpoint $S3_ENDPOINT_URL cp /tmp/backup.sql s3://crushback/backups/latest.sql
   schedule: "{{ .Values.backup.schedule }}"
   concurrencyPolicy: Forbid
   successfulJobsHistoryLimit: 2

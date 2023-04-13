@@ -26,9 +26,12 @@ database:
   password: dummy
 
 backup:
-  image: postgres:14.6-alpine3.17
-  dropboxToken: dummy
+  image: osodevops/aws-cli-postgres:latest
   schedule: "0 5 * * *"
+  s3:
+    endpoint: https://crushback.s3.ir-thr-at1.arvanstorage.ir
+    accessKey: dummy
+    secretKey: dummy
   restore:
     create: false # Make true to generate job from template and delete -> reapply it manually (by kubectl apply)
     backupFilename: latest.sql
