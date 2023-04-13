@@ -6,4 +6,5 @@ COPY Pipfile.lock .
 ARG HTTPS_PROXY
 RUN pipenv install --system --dev
 COPY . .
+ENV PYTHONUNBUFFERED=true
 CMD bash run.sh
