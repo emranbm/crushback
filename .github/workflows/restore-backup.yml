@@ -24,5 +24,4 @@ jobs:
           "${{ secrets.POSTGRES_ROOT_PASSWORD }}"
           "${{ secrets.BACKUP_S3_ACCESS_KEY_ID }}"
           "${{ secrets.BACKUP_S3_SECRET_KEY }}"
-          "${{ secrets.DROPBOX_TOKEN }}"
           "${{ github.event.inputs.backup_filename }}"
