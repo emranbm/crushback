@@ -99,7 +99,7 @@ jobs:
       - name: Run end-to-end tests
         working-directory: ./e2e-tests/telegrambot/
         env:
-          CRUSHBACK_VERSION: master-${GITHUB_SHA}
+          CRUSHBACK_VERSION: master-${{ env.GITHUB_SHA }}
         run: python ./main.py -E 'speed == ${{ matrix.test_speed }}'
   build-crushback-metrics-image:
     runs-on: ubuntu-20.04
