@@ -61,6 +61,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       fail-fast: true
+      max-parallel: 1 # Due to the shared test clients and bot token between tests
       matrix:
         test_speed: ['"slow"', 'None']
     needs:
@@ -93,14 +94,10 @@ jobs:
           CRUSHBACK_TELEGRAM_CLIENT2_SESSION_STRING=${{ secrets.CRUSHBACK_TELEGRAM_CLIENT2_SESSION_STRING }}
           " > .env
       - name: Pull backend image
-        env:
-          CRUSHBACK_VERSION: master-${{ env.GITHUB_SHA }}
-        run: docker-compose pull backend
+        run: CRUSHBACK_VERSION=master-${GITHUB_SHA} docker-compose pull backend
       - name: Run end-to-end tests
         working-directory: ./e2e-tests/telegrambot/
-        env:
-          CRUSHBACK_VERSION: master-${{ env.GITHUB_SHA }}
-        run: python ./main.py -E 'speed == ${{ matrix.test_speed }}'
+        run: CRUSHBACK_VERSION=master-${GITHUB_SHA} python ./main.py -E 'speed == ${{ matrix.test_speed }}'
   build-crushback-metrics-image:
     runs-on: ubuntu-20.04
     steps:
