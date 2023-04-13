@@ -6,7 +6,7 @@ from typing import Optional, Dict
 ROOT_DIR = "../.."
 BACKEND_DIR = f"{ROOT_DIR}/backend/"
 CHECK_MATCH_PERIOD_SECONDS = 1
-EXCLUDED_SERVICES_FROM_STARTING = ["frontend"]
+EXCLUDED_SERVICES_FROM_STARTING = ["frontend", "crushback-metrics"]
 
 
 async def add_crush(username: str, conversation):
