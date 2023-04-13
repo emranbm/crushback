@@ -26,7 +26,7 @@ database:
   password: dummy
 
 backup:
-  image: osodevops/aws-cli-postgres:latest
+  image: ianneub/pg-dump-to-s3:latest
   schedule: "0 5 * * *"
   s3:
     endpoint: https://crushback.s3.ir-thr-at1.arvanstorage.ir
