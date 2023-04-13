@@ -94,7 +94,7 @@ jobs:
           " > .env
       - name: Pull backend image
         env:
-          CRUSHBACK_VERSION: master-${GITHUB_SHA}
+          CRUSHBACK_VERSION: master-${{ env.GITHUB_SHA }}
         run: docker-compose pull backend
       - name: Run end-to-end tests
         working-directory: ./e2e-tests/telegrambot/
