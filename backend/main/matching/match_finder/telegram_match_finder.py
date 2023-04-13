@@ -24,19 +24,19 @@ class TelegramMatchFinder(MatchFinder):
         with connection.cursor() as cursor:
             cursor: CursorWrapper
             before_timestamp = str((timezone.now() - timedelta(minutes=settings.NEW_CRUSH_MATCH_FREEZE_MINUTES)).astimezone(timezone.utc))
-            cursor.execute(f"SELECT user1.id, user2.id "
-                           f"FROM {get_table_name(User)} AS user1 "
-                           f"INNER JOIN {get_table_name(Crush)} AS user1_crush "
-                           f"ON user1.id = user1_crush.{col(Crush.crusher)} "
-                           f"INNER JOIN {get_table_name(User)} AS user2 "
-                           f"ON user1_crush.{col(Crush.telegram_username)} = user2.{col(User.telegram_username)} "
-                           f"INNER JOIN {get_table_name(Crush)} AS user2_crush "
-                           f"ON user2_crush.{col(Crush.crusher)} = user2.id "
-                           f"WHERE user1_crush.{col(Crush.telegram_username)} = user2.{col(User.telegram_username)} "
-                           f"  AND user2_crush.{col(Crush.telegram_username)} = user1.{col(User.telegram_username)} "
-                           f"  AND user1_crush.{col(Crush.created_at)} <= TO_TIMESTAMP('{before_timestamp}', 'YYYY-MM-DD hh24:mi:ss') "
-                           f"  AND user2_crush.{col(Crush.created_at)} <= TO_TIMESTAMP('{before_timestamp}', 'YYYY-MM-DD hh24:mi:ss') "
-                           )
+            query = (f"SELECT user1.id, user2.id "
+                     f"FROM {get_table_name(User)} AS user1 "
+                     f"INNER JOIN {get_table_name(Crush)} AS user1_crush "
+                     f"ON user1.id = user1_crush.{col(Crush.crusher)} "
+                     f"INNER JOIN {get_table_name(User)} AS user2 "
+                     f"ON user1_crush.{col(Crush.telegram_username)} = user2.{col(User.telegram_username)} "
+                     f"INNER JOIN {get_table_name(Crush)} AS user2_crush "
+                     f"ON user2_crush.{col(Crush.crusher)} = user2.id "
+                     f"WHERE user1_crush.{col(Crush.telegram_username)} = user2.{col(User.telegram_username)} "
+                     f"  AND user2_crush.{col(Crush.telegram_username)} = user1.{col(User.telegram_username)} "
+                     f"  AND user1_crush.{col(Crush.created_at)} <= TO_TIMESTAMP('{before_timestamp}', 'YYYY-MM-DD hh24:mi:ss') "
+                     f"  AND user2_crush.{col(Crush.created_at)} <= TO_TIMESTAMP('{before_timestamp}', 'YYYY-MM-DD hh24:mi:ss') ")
+            cursor.execute(query)
             matches = cursor.fetchall()
             new_matches: List[MatchedRecord] = []
             for user_id_1, user_id_2 in matches:

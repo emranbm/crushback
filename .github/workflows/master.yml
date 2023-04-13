@@ -27,38 +27,6 @@ jobs:
       - name: Run unit tests
         working-directory: ./backend/
         run: pipenv run python ./manage.py test
-  end-to-end-tests:
-    runs-on: ubuntu-20.04
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.8'
-          cache: 'pipenv'
-      - name: Install pipenv
-        run: curl https://raw.githubusercontent.com/pypa/pipenv/master/get-pipenv.py | python
-      - run: pipenv install --dev
-        working-directory: ./e2e-tests/telegrambot/
-      - name: Make Pipenv also accessible inside tests
-        run: sudo cp `which pipenv` /usr/bin/pipenv
-      - name: Replace .env
-        working-directory: ./e2e-tests/telegrambot/
-        run: |
-          echo "
-          CRUSHBACK_TELEGRAM_BOT_TOKEN=${{ secrets.CRUSHBACK_TEST_TELEGRAM_TEST_BOT_TOKEN }}
-          CRUSHBACK_TELEGRAM_BOT_USERNAME=${{ vars.CRUSHBACK_TEST_TELEGRAM_BOT_USERNAME }}
-          CRUSHBACK_TELEGRAM_CLIENT1_USERNAME=${{ vars.CRUSHBACK_TELEGRAM_CLIENT1_USERNAME }}
-          CRUSHBACK_TELEGRAM_CLIENT1_API_ID=${{ secrets.CRUSHBACK_TELEGRAM_CLIENT1_API_ID }}
-          CRUSHBACK_TELEGRAM_CLIENT1_API_HASH=${{ secrets.CRUSHBACK_TELEGRAM_CLIENT1_API_HASH }}
-          CRUSHBACK_TELEGRAM_CLIENT1_SESSION_STRING=${{ secrets.CRUSHBACK_TELEGRAM_CLIENT1_SESSION_STRING }}
-          CRUSHBACK_TELEGRAM_CLIENT2_USERNAME=${{ vars.CRUSHBACK_TELEGRAM_CLIENT2_USERNAME }}
-          CRUSHBACK_TELEGRAM_CLIENT2_API_ID=${{ secrets.CRUSHBACK_TELEGRAM_CLIENT2_API_ID }}
-          CRUSHBACK_TELEGRAM_CLIENT2_API_HASH=${{ secrets.CRUSHBACK_TELEGRAM_CLIENT2_API_HASH }}
-          CRUSHBACK_TELEGRAM_CLIENT2_SESSION_STRING=${{ secrets.CRUSHBACK_TELEGRAM_CLIENT2_SESSION_STRING }}
-          " > .env
-      - name: Run end-to-end tests
-        working-directory: ./e2e-tests/telegrambot/
-        run: python ./main.py
   check-migrations:
     runs-on: ubuntu-20.04
     steps:
@@ -89,6 +57,47 @@ jobs:
         run: echo ${{ secrets.DOCKER_REGISTRY_TOKEN }} | docker login -u ${{ vars.DOCKER_REGISTRY_USER }} --password-stdin ${{ vars.DOCKER_REGISTRY_HOST }}
       - run: docker-compose build backend
       - run: docker-compose push backend
+  end-to-end-tests:
+    runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: true
+      matrix:
+        test_speed: ['"slow"', 'None']
+    needs:
+      - build-backend-image
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.8'
+          cache: 'pipenv'
+      - name: Install pipenv
+        run: curl https://raw.githubusercontent.com/pypa/pipenv/master/get-pipenv.py | python
+      - run: pipenv install --dev
+        working-directory: ./e2e-tests/telegrambot/
+      - name: Make Pipenv also accessible inside tests
+        run: sudo cp `which pipenv` /usr/bin/pipenv
+      - name: Replace .env
+        working-directory: ./e2e-tests/telegrambot/
+        run: |
+          echo "
+          CRUSHBACK_VERSION=master-${GITHUB_SHA}
+          CRUSHBACK_TELEGRAM_BOT_TOKEN=${{ secrets.CRUSHBACK_TEST_TELEGRAM_TEST_BOT_TOKEN }}
+          CRUSHBACK_TELEGRAM_BOT_USERNAME=${{ vars.CRUSHBACK_TEST_TELEGRAM_BOT_USERNAME }}
+          CRUSHBACK_TELEGRAM_CLIENT1_USERNAME=${{ vars.CRUSHBACK_TELEGRAM_CLIENT1_USERNAME }}
+          CRUSHBACK_TELEGRAM_CLIENT1_API_ID=${{ secrets.CRUSHBACK_TELEGRAM_CLIENT1_API_ID }}
+          CRUSHBACK_TELEGRAM_CLIENT1_API_HASH=${{ secrets.CRUSHBACK_TELEGRAM_CLIENT1_API_HASH }}
+          CRUSHBACK_TELEGRAM_CLIENT1_SESSION_STRING=${{ secrets.CRUSHBACK_TELEGRAM_CLIENT1_SESSION_STRING }}
+          CRUSHBACK_TELEGRAM_CLIENT2_USERNAME=${{ vars.CRUSHBACK_TELEGRAM_CLIENT2_USERNAME }}
+          CRUSHBACK_TELEGRAM_CLIENT2_API_ID=${{ secrets.CRUSHBACK_TELEGRAM_CLIENT2_API_ID }}
+          CRUSHBACK_TELEGRAM_CLIENT2_API_HASH=${{ secrets.CRUSHBACK_TELEGRAM_CLIENT2_API_HASH }}
+          CRUSHBACK_TELEGRAM_CLIENT2_SESSION_STRING=${{ secrets.CRUSHBACK_TELEGRAM_CLIENT2_SESSION_STRING }}
+          " > .env
+      - name: Pull backend image
+        run: docker-compose pull backend
+      - name: Run end-to-end tests
+        working-directory: ./e2e-tests/telegrambot/
+        run: python ./main.py -E 'speed == ${{ matrix.test_speed }}'
   build-crushback-metrics-image:
     runs-on: ubuntu-20.04
     steps:

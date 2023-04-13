@@ -16,8 +16,6 @@ services:
       - CRUSHBACK_DB_NAME
       - CRUSHBACK_DB_HOST
       - CRUSHBACK_DB_PORT
-      - CRUSHBACK_TELEGRAM_BOT_TOKEN
-      - CRUSHBACK_TELEGRAM_PROXY_URL
       # Environment variables used by tests
       - CRUSHBACK_TELEGRAM_CLIENT1_API_ID
       - CRUSHBACK_TELEGRAM_CLIENT1_API_HASH
@@ -29,13 +27,9 @@ services:
     depends_on:
       - database
   telegrambot:
-    image: ${DOCKER_IMAGES_PREFIX}-telegrambot:${CRUSHBACK_VERSION}
-    command: bash -c "./manage.py telegrambot"
+    image: ${DOCKER_IMAGES_PREFIX}-backend:${CRUSHBACK_VERSION}
+    command: bash -c "sleep 2 && ./manage.py telegrambot"
     restart: unless-stopped
-    build:
-      context: backend/
-      args:
-        - HTTPS_PROXY
     environment:
       - CRUSHBACK_SECRET_KEY
       - CRUSHBACK_DB_USER
@@ -44,9 +38,39 @@ services:
       - CRUSHBACK_DB_HOST
       - CRUSHBACK_DB_PORT
       - CRUSHBACK_TELEGRAM_BOT_TOKEN
-      - CRUSHBACK_TELEGRAM_PROXY_URL
+      - CRUSHBACK_TELEGRAM_PROXY_URL=socks5://socks-proxy:9000
     ports:
       - "9090:9090"
+    depends_on:
+      - database
+      - socks-proxy
+  matchfinder:
+    image: ${DOCKER_IMAGES_PREFIX}-backend:${CRUSHBACK_VERSION}
+    command: bash -c "./manage.py findnewmatches --period 1"
+    restart: unless-stopped
+    environment:
+      - CRUSHBACK_SECRET_KEY
+      - CRUSHBACK_DB_USER
+      - CRUSHBACK_DB_PASSWORD
+      - CRUSHBACK_DB_NAME
+      - CRUSHBACK_DB_HOST
+      - CRUSHBACK_DB_PORT
+      - CRUSHBACK_NEW_CRUSH_MATCH_FREEZE_MINUTES
+    depends_on:
+      - database
+  matchinformer:
+    image: ${DOCKER_IMAGES_PREFIX}-backend:${CRUSHBACK_VERSION}
+    command: bash -c "./manage.py informmatches --period 1"
+    restart: unless-stopped
+    environment:
+      - CRUSHBACK_SECRET_KEY
+      - CRUSHBACK_DB_USER
+      - CRUSHBACK_DB_PASSWORD
+      - CRUSHBACK_DB_NAME
+      - CRUSHBACK_DB_HOST
+      - CRUSHBACK_DB_PORT
+      - CRUSHBACK_TELEGRAM_BOT_TOKEN
+      - CRUSHBACK_TELEGRAM_PROXY_URL=socks5://socks-proxy:9000
     depends_on:
       - database
       - socks-proxy
@@ -65,7 +89,7 @@ services:
       - SOCKS_USER
       - SOCKS_PASS
     ports:
-    - "9000"
+      - "9000"
   database:
     image: postgres:14.6-alpine3.17
     restart: unless-stopped
