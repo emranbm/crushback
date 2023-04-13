@@ -94,10 +94,16 @@ jobs:
           CRUSHBACK_TELEGRAM_CLIENT2_SESSION_STRING=${{ secrets.CRUSHBACK_TELEGRAM_CLIENT2_SESSION_STRING }}
           " > .env
       - name: Pull backend image
-        run: CRUSHBACK_VERSION=master-${GITHUB_SHA} docker-compose pull backend
+        run: >
+          CRUSHBACK_VERSION=master-${GITHUB_SHA}
+          CRUSHBACK_TELEGRAM_BOT_TOKEN=${{ secrets.CRUSHBACK_TEST_TELEGRAM_TEST_BOT_TOKEN }}
+          docker-compose pull backend
       - name: Run end-to-end tests
         working-directory: ./e2e-tests/telegrambot/
-        run: CRUSHBACK_VERSION=master-${GITHUB_SHA} python ./main.py -E 'speed == ${{ matrix.test_speed }}'
+        run: >
+          CRUSHBACK_VERSION=master-${GITHUB_SHA}
+          CRUSHBACK_TELEGRAM_BOT_TOKEN=${{ secrets.CRUSHBACK_TEST_TELEGRAM_TEST_BOT_TOKEN }}
+          python ./main.py -E 'speed == ${{ matrix.test_speed }}'
   build-crushback-metrics-image:
     runs-on: ubuntu-20.04
     steps:
