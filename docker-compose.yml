@@ -76,14 +76,9 @@ services:
       - socks-proxy
   socks-proxy:
     image: ictu/sshpass:latest
-    command: >
-      sshpass -p "$SOCKS_PASS"
-      ssh
-      -oServerAliveInterval=100
-      -oStrictHostKeyChecking=no
-      -D ":9000"
-      -N
-      "$SOCKS_USER@$SOCKS_HOST"
+    command: sh /socks-proxy.sh
+    volumes:
+      - ./socks-proxy.sh:/socks-proxy.sh:ro
     environment:
       - SOCKS_HOST
       - SOCKS_USER
