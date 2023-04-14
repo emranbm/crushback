@@ -10,7 +10,6 @@ services:
     environment:
       - DJANGO_SETTINGS_MODULE
       - CRUSHBACK_SECRET_KEY
-      - RECAPTCHA_SERVER_KEY
       - CRUSHBACK_DB_USER
       - CRUSHBACK_DB_PASSWORD
       - CRUSHBACK_DB_NAME

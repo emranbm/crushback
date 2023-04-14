@@ -3,7 +3,6 @@
 # Declare variables to be passed into your templates.
 
 secretKey: dummy
-recaptchaServerKey: dummy
 djangoSettingsModule: backend.settings-production
 matchFinderPeriodSeconds: 300
 
@@ -14,8 +13,8 @@ image:
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
 resources:
-  cpu: 300m
-  memory: 128Mi
+  cpu: 200m
+  memory: 100Mi
   ephemeral-storage: 150Mi
 
 database:

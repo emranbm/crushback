@@ -1,16 +1,14 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "crushback-backend.fullname" . }}
+  name: {{ include "crushback-backend.fullname" . }}-match-finder
   labels:
-  {{- include "crushback-backend.labels" . | nindent 4 }}
+    crsuhback-service: match-finder
 spec:
-  {{- if not .Values.autoscaling.enabled }}
-  replicas: {{ .Values.replicaCount }}
-  {{- end }}
+  replicas: 1 # Hardcoded to prevent concurrency issues.
   selector:
     matchLabels:
-  {{- include "crushback-backend.selectorLabels" . | nindent 6 }}
+      crsuhback-service: match-finder
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -18,7 +16,7 @@ spec:
       {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-    {{- include "crushback-backend.selectorLabels" . | nindent 8 }}
+        crsuhback-service: match-finder
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -27,19 +25,18 @@ spec:
       securityContext:
       {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
-        - name: {{ .Chart.Name }}
+        - name: {{ .Chart.Name }}-match-finder
           securityContext:
           {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          command:
+            - python
+            - -u
+            - manage.py
+            - findnewmatches
+            - --period
+            - "{{ .Values.matchFinderPeriodSeconds }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          ports:
-            - name: backend
-              containerPort: 80
-              protocol: TCP
-          livenessProbe:
-            httpGet:
-              path: /api/
-              port: backend
           resources:
             limits:
             {{- toYaml .Values.resources | nindent 14 }}
@@ -48,8 +45,6 @@ spec:
           env:
             - name: CRUSHBACK_SECRET_KEY
               value: "{{ .Values.secretKey }}"
-            - name: RECAPTCHA_SERVER_KEY
-              value: "{{ .Values.recaptchaServerKey }}"
             - name: DJANGO_SETTINGS_MODULE
               value: "{{ .Values.djangoSettingsModule }}"
             - name: CRUSHBACK_DB_HOST
