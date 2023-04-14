@@ -14,9 +14,9 @@ image:
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
 resources:
-  cpu: 200m
+  cpu: 300m
   memory: 128Mi
-  ephemeral-storage: 200Mi
+  ephemeral-storage: 150Mi
 
 database:
   host: postgresql
