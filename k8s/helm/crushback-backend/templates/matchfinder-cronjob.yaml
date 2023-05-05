@@ -10,6 +10,7 @@ spec:
     spec:
       template:
         spec:
+          restartPolicy: Never
           {{- with .Values.imagePullSecrets }}
           imagePullSecrets:
           {{- toYaml . | nindent 12 }}
