@@ -6,6 +6,7 @@ metadata:
     crsuhback-service: match-finder
 spec:
   schedule: "{{ .Values.matchInformerSchedule }}"
+  concurrencyPolicy: Forbid
   jobTemplate:
     spec:
       template:
