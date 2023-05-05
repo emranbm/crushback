@@ -12,12 +12,12 @@ spec:
         spec:
           {{- with .Values.imagePullSecrets }}
           imagePullSecrets:
-          {{- toYaml . | nindent 10 }}
+          {{- toYaml . | nindent 12 }}
           {{- end }}
           containers:
             - name: {{ .Chart.Name }}-match-finder
               securityContext:
-              {{- toYaml .Values.securityContext | nindent 14 }}
+              {{- toYaml .Values.securityContext | nindent 16 }}
               image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
               command:
                 - python
@@ -27,9 +27,9 @@ spec:
               imagePullPolicy: {{ .Values.image.pullPolicy }}
               resources:
                 limits:
-                {{- toYaml .Values.resources | nindent 16 }}
+                {{- toYaml .Values.resources | nindent 18 }}
                 requests:
-              {{- toYaml .Values.resources | nindent 16 }}
+              {{- toYaml .Values.resources | nindent 18 }}
               env:
                 - name: CRUSHBACK_SECRET_KEY
                   value: "{{ .Values.secretKey }}"
@@ -47,13 +47,13 @@ spec:
                   value: "{{ .Values.database.password }}"
           {{- with .Values.nodeSelector }}
           nodeSelector:
-          {{- toYaml . | nindent 10 }}
+          {{- toYaml . | nindent 12 }}
           {{- end }}
           {{- with .Values.affinity }}
           affinity:
-          {{- toYaml . | nindent 10 }}
+          {{- toYaml . | nindent 12 }}
           {{- end }}
           {{- with .Values.tolerations }}
           tolerations:
-  {{- toYaml . | nindent 10 }}
+  {{- toYaml . | nindent 12 }}
   {{- end }}
