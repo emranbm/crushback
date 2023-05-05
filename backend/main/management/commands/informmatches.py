@@ -14,29 +14,20 @@ class Command(BaseCommand):
     help = 'Informs new non-informed matches.'
     match_informer: TelegramicInformer
 
-    def add_arguments(self, parser: ArgumentParser):
-        parser.add_argument('--period', action='store',
-                            help="Waiting period between checks. (seconds)",
-                            type=int,
-                            default=600)
-
     def handle(self, *args, **options):
-        period_seconds = options['period']
-        self.stdout.write(f"Starting to inform new matches every {period_seconds} seconds ...")
-        self.match_informer = TelegramicInformer()
-        while True:
-            asyncio.run(self.inform_matches())
-            sleep(period_seconds)
+        self.stdout.write(f"Starting to inform new matches ...")
+        asyncio.run(self.inform_matches())
 
     async def inform_matches(self):
         self.stdout.write(f"({datetime.now()}) Informing new matches...")
+        match_informer = TelegramicInformer()
         non_informed_records = MatchedRecord.objects.filter(informed=False).aiterator()
         total_count = 0
         informed_count = 0
         record: MatchedRecord
         async for record in non_informed_records:
             total_count += 1
-            informed = await self.match_informer.inform_match(record)
+            informed = await match_informer.inform_match(record)
             if not informed:
                 self.stdout.write(f"ERROR: Couldn't inform matched record!")
             else:

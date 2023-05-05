@@ -6,7 +6,7 @@ from typing import Optional, Dict, List
 ROOT_DIR = "../.."
 BACKEND_DIR = f"{ROOT_DIR}/backend/"
 CHECK_MATCH_PERIOD_SECONDS = 1
-EXCLUDED_SERVICES_FROM_STARTING = ["frontend", "crushback-metrics", "matchfinder"]
+EXCLUDED_SERVICES_FROM_STARTING = ["frontend", "crushback-metrics", "matchfinder", "matchinformer"]
 
 
 async def add_crush(username: str, conversation):
@@ -56,13 +56,6 @@ def run_backend_manage_command(*cmd: str, stdin=None, additional_env: Optional[D
                             env=env)
 
 
-async def restart_services(additional_env: Optional[Dict[str, str]] = None) -> subprocess.Popen:
-    subprocess.Popen(["docker-compose", "down"],
-                     cwd=ROOT_DIR).communicate()
-    docker_compose_up(additional_env)
-    await asyncio.sleep(5)
-
-
 def docker_compose_up(additional_env: Optional[Dict[str, str]] = None):
     out, _ = subprocess.Popen(["docker-compose", "config", "--services"],
                               stdout=subprocess.PIPE,
@@ -86,8 +79,9 @@ def _docker_compose_up(args: List[str], additional_env: Optional[Dict[str, str]]
                      cwd=ROOT_DIR, env=env).communicate()
 
 
-def run_matchfinder(additional_env: Optional[Dict[str, str]] = None):
+def trigger_matchfinder_and_matchinformer(additional_env: Optional[Dict[str, str]] = None):
     _docker_compose_up(["matchfinder"], additional_env)
+    _docker_compose_up(["matchinformer"], additional_env)
 
 
 def attribute(*args, **kwargs):

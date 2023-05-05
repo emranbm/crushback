@@ -58,8 +58,7 @@ services:
       - database
   matchinformer:
     image: ${DOCKER_IMAGES_PREFIX}-backend:${CRUSHBACK_VERSION}
-    command: bash -c "./manage.py informmatches --period 1"
-    restart: unless-stopped
+    command: bash -c "./manage.py informmatches"
     environment:
       - CRUSHBACK_SECRET_KEY
       - CRUSHBACK_DB_USER

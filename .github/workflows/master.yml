@@ -63,7 +63,9 @@ jobs:
       fail-fast: true
       max-parallel: 1 # Due to the shared test clients and bot token between tests
       matrix:
-        test_speed: ['"slow"', 'None']
+        test_speed:
+          - 'None'
+          - '"slow"'
     needs:
       - build-backend-image
     steps:

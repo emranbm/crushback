@@ -1,0 +1,61 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: {{ include "crushback-telegrambot.fullname" . }}-match-informer
+  labels:
+    crsuhback-service: match-finder
+spec:
+  schedule: "{{ .Values.matchInformerSchedule }}"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          {{- with .Values.imagePullSecrets }}
+          imagePullSecrets:
+          {{- toYaml . | nindent 8 }}
+          {{- end }}
+          containers:
+            - name: {{ .Chart.Name }}-match-informer
+              securityContext:
+              {{- toYaml .Values.securityContext | nindent 12 }}
+              image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+              command:
+                - python
+                - -u
+                - manage.py
+                - informmatches
+              imagePullPolicy: {{ .Values.image.pullPolicy }}
+              resources:
+                limits:
+                {{- toYaml .Values.resources | nindent 14 }}
+                requests:
+              {{- toYaml .Values.resources | nindent 14 }}
+              env:
+                - name: CRUSHBACK_SECRET_KEY
+                  value: "{{ .Values.secretKey }}"
+                - name: CRUSHBACK_DB_HOST
+                  value: "{{ .Values.database.host }}"
+                - name: CRUSHBACK_DB_PORT
+                  value: "{{ .Values.database.port }}"
+                - name: CRUSHBACK_DB_NAME
+                  value: "{{ .Values.database.name }}"
+                - name: CRUSHBACK_DB_USER
+                  value: "{{ .Values.database.user }}"
+                - name: CRUSHBACK_DB_PASSWORD
+                  value: "{{ .Values.database.password }}"
+                - name: CRUSHBACK_TELEGRAM_BOT_TOKEN
+                  value: {{ .Values.telegramBotToken }}
+                - name: CRUSHBACK_TELEGRAM_PROXY_URL
+                  value: {{ .Values.proxyUrl }}
+          {{- with .Values.nodeSelector }}
+          nodeSelector:
+          {{- toYaml . | nindent 8 }}
+          {{- end }}
+          {{- with .Values.affinity }}
+          affinity:
+          {{- toYaml . | nindent 8 }}
+          {{- end }}
+          {{- with .Values.tolerations }}
+          tolerations:
+      {{- toYaml . | nindent 8 }}
+  {{- end }}
