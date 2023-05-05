@@ -31,9 +31,6 @@ class AddCrushTest(TelegramBotTestCase):
 
     @testing_utils.is_slow
     async def test_user_should_be_informed_only_after_the_configured_delay(self):
-        await testing_utils.restart_services(additional_env={
-            'CRUSHBACK_NEW_CRUSH_MATCH_FREEZE_MINUTES': '1'
-        })
         async with self._create_conversation(1) as conv:
             await conv.send_message('/addcrush')
             await conv.get_response()
@@ -44,7 +41,14 @@ class AddCrushTest(TelegramBotTestCase):
             await conv.get_response()
             await conv.send_message(f'@{self.clients[0]["username"]}')
             await conv.get_response()  # Crush saved ack
+            testing_utils.run_matchfinder(additional_env={
+                'CRUSHBACK_NEW_CRUSH_MATCH_FREEZE_MINUTES': '1'
+            })
             with self.assertRaises(asyncio.exceptions.TimeoutError):
                 await conv.get_response(timeout=testing_utils.CHECK_MATCH_PERIOD_SECONDS + 3)
-            msg: Message = await conv.get_response(timeout=testing_utils.CHECK_MATCH_PERIOD_SECONDS + 63)  # Crush matched message
+
+            testing_utils.run_matchfinder(additional_env={
+                'CRUSHBACK_NEW_CRUSH_MATCH_FREEZE_MINUTES': '0'
+            })
+            msg: Message = await conv.get_response(timeout=testing_utils.CHECK_MATCH_PERIOD_SECONDS + 3)  # Crush matched message
             self.assertTrue("congratulations" in msg.text.lower())

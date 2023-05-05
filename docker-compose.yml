@@ -45,8 +45,7 @@ services:
       - socks-proxy
   matchfinder:
     image: ${DOCKER_IMAGES_PREFIX}-backend:${CRUSHBACK_VERSION}
-    command: bash -c "./manage.py findnewmatches --period 1"
-    restart: unless-stopped
+    command: bash -c "./manage.py findnewmatches"
     environment:
       - CRUSHBACK_SECRET_KEY
       - CRUSHBACK_DB_USER

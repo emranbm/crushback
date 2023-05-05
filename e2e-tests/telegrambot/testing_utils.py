@@ -1,12 +1,12 @@
 import asyncio
 import os
 import subprocess
-from typing import Optional, Dict
+from typing import Optional, Dict, List
 
 ROOT_DIR = "../.."
 BACKEND_DIR = f"{ROOT_DIR}/backend/"
 CHECK_MATCH_PERIOD_SECONDS = 1
-EXCLUDED_SERVICES_FROM_STARTING = ["frontend", "crushback-metrics"]
+EXCLUDED_SERVICES_FROM_STARTING = ["frontend", "crushback-metrics", "matchfinder"]
 
 
 async def add_crush(username: str, conversation):
@@ -64,6 +64,16 @@ async def restart_services(additional_env: Optional[Dict[str, str]] = None) -> s
 
 
 def docker_compose_up(additional_env: Optional[Dict[str, str]] = None):
+    out, _ = subprocess.Popen(["docker-compose", "config", "--services"],
+                              stdout=subprocess.PIPE,
+                              stderr=subprocess.PIPE,
+                              cwd=ROOT_DIR).communicate()
+    service_names = out.decode('utf-8').strip().split('\n')
+    service_names = [s for s in service_names if s not in EXCLUDED_SERVICES_FROM_STARTING]
+    _docker_compose_up(["-d"] + service_names, additional_env)
+
+
+def _docker_compose_up(args: List[str], additional_env: Optional[Dict[str, str]] = None):
     env = os.environ.copy()
     if additional_env is not None:
         for k, v in additional_env.items():
@@ -72,10 +82,12 @@ def docker_compose_up(additional_env: Optional[Dict[str, str]] = None):
                               stdout=subprocess.PIPE,
                               stderr=subprocess.PIPE,
                               cwd=ROOT_DIR).communicate()
-    service_names = out.decode('utf-8').strip().split('\n')
-    service_names = [s for s in service_names if s not in EXCLUDED_SERVICES_FROM_STARTING]
-    subprocess.Popen(["docker-compose", "up", "-d"] + service_names,
+    subprocess.Popen(["docker-compose", "up"] + args,
                      cwd=ROOT_DIR, env=env).communicate()
+
+
+def run_matchfinder(additional_env: Optional[Dict[str, str]] = None):
+    _docker_compose_up(["matchfinder"], additional_env)
 
 
 def attribute(*args, **kwargs):
