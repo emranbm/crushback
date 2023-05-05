@@ -65,7 +65,7 @@ jobs:
       matrix:
         test_speed:
           - 'None'
-          - '"slow"'
+          # - '"slow"' # Commented to free 1-minute CI placeholder. Uncomment when any slow test existed!
     needs:
       - build-backend-image
     steps:
