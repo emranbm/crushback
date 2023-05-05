@@ -4,7 +4,7 @@
 
 secretKey: dummy
 djangoSettingsModule: backend.settings-production
-matchFinderPeriodSeconds: 300
+matchFinderSchedule: "*/5 * * * *"
 
 replicaCount: 1
 image:
