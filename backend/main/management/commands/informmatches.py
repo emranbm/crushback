@@ -1,10 +1,8 @@
 import asyncio
-from argparse import ArgumentParser
 from datetime import datetime
 
 from asgiref.sync import sync_to_async
 from django.core.management import BaseCommand
-from time import sleep
 
 from main.matching.match_informer.telegramic_informer import TelegramicInformer
 from main.models import MatchedRecord
@@ -16,18 +14,18 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         self.stdout.write(f"Starting to inform new matches ...")
+        self.match_informer = TelegramicInformer()
         asyncio.run(self.inform_matches())
 
     async def inform_matches(self):
         self.stdout.write(f"({datetime.now()}) Informing new matches...")
-        match_informer = TelegramicInformer()
         non_informed_records = MatchedRecord.objects.filter(informed=False).aiterator()
         total_count = 0
         informed_count = 0
         record: MatchedRecord
         async for record in non_informed_records:
             total_count += 1
-            informed = await match_informer.inform_match(record)
+            informed = await self.match_informer.inform_match(record)
             if not informed:
                 self.stdout.write(f"ERROR: Couldn't inform matched record!")
             else:
